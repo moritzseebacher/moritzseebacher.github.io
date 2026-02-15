@@ -36,20 +36,12 @@
 
 /* --- PHONES (and small tablets) --- */
 @media (max-width: 800px) {
-  /* Side-by-side layout: picture left, info right */
-  .sidebar .h-card {
-    display: flex !important;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 8px 16px;
-  }
-
+  /* Stacked layout: picture, then name/bio/links below */
   .sidebar .author__avatar {
     display: block !important;
-    width: min(60vw, 220px);
+    width: min(80vw, 290px);
     max-width: none;
-    margin: 0;
-    flex-shrink: 0;
+    margin: 0 auto;
   }
 
   .sidebar .author__avatar img {
@@ -63,12 +55,41 @@
 
   .sidebar .author__content {
     display: block !important;
-    flex: 1;
-    min-width: 120px;
     padding: 0 !important;
+    margin-top: 6px;
+    text-align: center;
   }
 
+  /* Hide Follow toggle, show links directly like desktop */
   .sidebar .author__urls-wrapper {
-    flex-basis: 100%;
+    position: relative;
+  }
+
+  .sidebar .author__urls-wrapper button {
+    display: none !important;
+  }
+
+  .sidebar .author__urls {
+    display: block !important;
+    position: static !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .sidebar .author__urls::before,
+  .sidebar .author__urls::after {
+    display: none !important;
+  }
+
+  /* Hide masthead nav links on mobile (navigation is in the sidebar) */
+  .greedy-nav .visible-links {
+    display: none !important;
+  }
+
+  .greedy-nav__toggle {
+    display: none !important;
   }
 }
