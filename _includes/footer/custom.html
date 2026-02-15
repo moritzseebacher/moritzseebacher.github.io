@@ -6,6 +6,9 @@
     var hidden = document.querySelector('.greedy-nav .hidden-links');
     var toggle = document.querySelector('.greedy-nav__toggle');
     if (!visible || !hidden) return;
+    // Move everything back to visible first to restore original order
+    while (hidden.children.length) visible.appendChild(hidden.children[0]);
+    // Now move all to hidden in the correct top-to-bottom order
     while (visible.children.length) hidden.appendChild(visible.children[0]);
     if (toggle) toggle.classList.remove('hidden');
   }
