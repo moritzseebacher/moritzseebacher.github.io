@@ -30,19 +30,44 @@
 
 /* --- PHONES (and small tablets) --- */
 @media (max-width: 800px) {
-  /* Make the avatar smaller and centered on mobile */
+  /* Side-by-side layout: picture left, info right */
+  .sidebar .h-card {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px 12px;
+  }
+
   .sidebar .author__avatar {
+    display: block !important;
     width: min(60vw, 220px);
     max-width: none;
-    margin: 0 auto;
+    margin: 0;
+    flex-shrink: 0;
   }
 
   .sidebar .author__avatar img {
     width: 100%;
     height: auto;
-    aspect-ratio: auto !important;  /* cancel the square */
-    object-fit: contain !important; /* no crop; natural rectangle */
-    border-radius: 0 !important;    /* rectangular on mobile */
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
     display: block;
+  }
+
+  .sidebar .author__content {
+    display: block !important;
+    flex: 1;
+    min-width: 120px;
+    padding: 0 !important;
+  }
+
+  /* Hide redundant name (already in page header) */
+  .sidebar .author__name {
+    display: none !important;
+  }
+
+  .sidebar .author__urls-wrapper {
+    flex-basis: 100%;
   }
 }
