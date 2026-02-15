@@ -1,0 +1,18 @@
+<script>
+(function() {
+  if (window.innerWidth > 800) return;
+  function moveAll() {
+    var visible = document.querySelector('.greedy-nav .visible-links');
+    var hidden = document.querySelector('.greedy-nav .hidden-links');
+    var toggle = document.querySelector('.greedy-nav__toggle');
+    if (!visible || !hidden) return;
+    while (visible.children.length) hidden.appendChild(visible.children[0]);
+    if (toggle) toggle.classList.remove('hidden');
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(moveAll, 50); });
+  } else {
+    setTimeout(moveAll, 50);
+  }
+})();
+</script>

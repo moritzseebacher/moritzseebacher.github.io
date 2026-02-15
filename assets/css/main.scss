@@ -39,7 +39,7 @@
   /* Grid: picture left, name/bio + links stacked on the right */
   .sidebar .h-card {
     display: grid !important;
-    grid-template-columns: min(45vw, 180px) 1fr;
+    grid-template-columns: min(60vw, 220px) 1fr;
     gap: 4px 20px;
   }
 
