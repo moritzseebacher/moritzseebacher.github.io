@@ -36,12 +36,20 @@
 
 /* --- PHONES (and small tablets) --- */
 @media (max-width: 800px) {
-  /* Stacked layout: picture, then name/bio/links below */
+  /* Side-by-side: picture left, text right */
+  .sidebar .h-card {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px 20px;
+  }
+
   .sidebar .author__avatar {
     display: block !important;
-    width: min(80vw, 290px);
+    width: min(45vw, 180px);
     max-width: none;
-    margin: 0 auto;
+    margin: 0;
+    flex-shrink: 0;
   }
 
   .sidebar .author__avatar img {
@@ -55,14 +63,16 @@
 
   .sidebar .author__content {
     display: block !important;
+    flex: 1;
+    min-width: 100px;
     padding: 0 !important;
-    margin-top: 6px;
-    text-align: center;
   }
 
   /* Hide Follow toggle, show links directly like desktop */
   .sidebar .author__urls-wrapper {
     position: relative;
+    flex: 1;
+    min-width: 100px;
   }
 
   .sidebar .author__urls-wrapper button {
@@ -84,12 +94,13 @@
     display: none !important;
   }
 
-  /* Hide masthead nav links on mobile (navigation is in the sidebar) */
-  .greedy-nav .visible-links {
+  /* Restyle masthead toggle as "Sections" label */
+  .greedy-nav__toggle .navicon {
     display: none !important;
   }
 
-  .greedy-nav__toggle {
-    display: none !important;
+  .greedy-nav__toggle::after {
+    content: "Sections";
+    font-size: 14px;
   }
 }
