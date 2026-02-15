@@ -3,6 +3,11 @@
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
 @import "minimal-mistakes";
 
+/* Hide the page title — name already appears in the author profile */
+.page__title {
+  display: none !important;
+}
+
 /* --- DESKTOP & LARGE TABLETS --- */
 @media (min-width: 1024px) {
   .sidebar .author__avatar {
@@ -26,10 +31,6 @@
     border-radius: 50%;
   }
 
-  /* Hide redundant name (already in page header) */
-  .sidebar .author__name {
-    display: none !important;
-  }
 }
 
 
@@ -40,7 +41,7 @@
     display: flex !important;
     flex-wrap: wrap;
     align-items: flex-start;
-    gap: 4px 12px;
+    gap: 8px 16px;
   }
 
   .sidebar .author__avatar {
@@ -65,11 +66,6 @@
     flex: 1;
     min-width: 120px;
     padding: 0 !important;
-  }
-
-  /* Hide redundant name (already in page header) */
-  .sidebar .author__name {
-    display: none !important;
   }
 
   .sidebar .author__urls-wrapper {
