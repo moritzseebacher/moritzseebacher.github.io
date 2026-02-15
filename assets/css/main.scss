@@ -25,6 +25,11 @@
     object-position: 50% 15%;
     border-radius: 50%;
   }
+
+  /* Hide redundant name (already in page header) */
+  .sidebar .author__name {
+    display: none !important;
+  }
 }
 
 
