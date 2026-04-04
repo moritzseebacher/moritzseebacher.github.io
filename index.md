@@ -1,6 +1,5 @@
 ---
 layout: single
-title: "Moritz Seebacher"
 classes: wide
 author_profile: true
 ---
