@@ -40,6 +40,6 @@ I am a PhD student at the [ifo Center for the Economics of Education](https://ww
 
 ## CV {#cv}
 
-You can find my CV **[here](/CV_Academic_Moritz_Seebacher_01_26.pdf)**.
+You can find my CV **[here](/CV_Academic_Moritz_Seebacher_02_26_English.pdf)**.
 
 ---

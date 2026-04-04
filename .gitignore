@@ -1,0 +1,12 @@
+# CV source document — keep local only, do not commit
+*.docx
+
+# Jekyll build output
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# OS / editor
+.DS_Store
+Thumbs.db

@@ -2,6 +2,7 @@ author:
   name: "Moritz Seebacher"
   avatar: "/Seebacher-Moritz_2023_7_ret_pass_format.jpg"
   bio: "PhD student at the ifo Institute and LMU Munich."
+  location: "Munich, Germany"
   links:
     - label: "Email"
       icon: "fas fa-envelope"
@@ -12,8 +13,8 @@ author:
 
 title: "Moritz Seebacher"
 masthead_title: "Home"
-description: "Research • Education & Labor Economics"
-url: "https://moseeb98.github.io"
+description: "Moritz Seebacher — PhD student at ifo Institute and LMU Munich. Research in education and labor economics."
+url: "https://moritzseebacher.github.io"
 baseurl: ""
 timezone: Europe/Berlin
 locale: en
