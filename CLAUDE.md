@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Academic personal website for Moritz Seebacher (PhD student, ifo Institute / LMU Munich). Hosted on GitHub Pages at `moseeb98.github.io`. Research focus: education & labor economics, using LinkedIn data to study skills, social networks, and career trajectories.
+Academic personal website for Moritz Seebacher (PhD student, ifo Institute / LMU Munich). Hosted on GitHub Pages at `https://moritzseebacher.github.io`. Repository: `github.com/moritzseebacher/moritzseebacher.github.io`. Research focus: education & labor economics, using LinkedIn data to study skills, social networks, and career trajectories.
 
 ## Tech Stack
 
@@ -90,3 +90,6 @@ The CV is maintained in a Word document (`.docx`) that lives in the repo root lo
 ## Deployment
 
 Push to `main` branch → GitHub Pages builds and deploys automatically. No CI/CD config needed.
+
+Repository: `https://github.com/moritzseebacher/moritzseebacher.github.io`
+Live site: `https://moritzseebacher.github.io`
