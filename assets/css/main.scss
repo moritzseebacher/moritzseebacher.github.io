@@ -111,6 +111,12 @@
     overflow: hidden !important;
   }
 
+  /* Push the "…" toggle to the right edge of the nav bar */
+  .greedy-nav__toggle {
+    margin-left: auto !important;
+    order: 99;
+  }
+
   /* Replace hamburger icon with "…" */
   .greedy-nav__toggle .navicon {
     display: none !important;
@@ -119,5 +125,21 @@
   .greedy-nav__toggle::after {
     content: "\2026";
     font-size: 20px;
+  }
+
+  /* Anchor the dropdown to the right edge so it opens under the toggle */
+  .greedy-nav .hidden-links {
+    right: 0 !important;
+    left: auto !important;
+  }
+
+  .greedy-nav .hidden-links::before {
+    right: 12px !important;
+    left: auto !important;
+  }
+
+  .greedy-nav .hidden-links::after {
+    right: 13px !important;
+    left: auto !important;
   }
 }
