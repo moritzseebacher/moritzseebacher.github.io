@@ -1,21 +1,54 @@
 <script>
 (function() {
-  if (window.innerWidth > 800) return;
+  var ORIGINAL_ORDER = null;
+
+  function captureOrder() {
+    if (ORIGINAL_ORDER) return;
+    var visible = document.querySelector('.greedy-nav .visible-links');
+    var hidden = document.querySelector('.greedy-nav .hidden-links');
+    if (!visible) return;
+    var items = [];
+    Array.prototype.forEach.call(visible.children, function(li) { items.push(li); });
+    if (hidden) {
+      Array.prototype.forEach.call(hidden.children, function(li) { items.push(li); });
+    }
+    if (items.length) ORIGINAL_ORDER = items;
+  }
+
   function moveAll() {
+    if (window.innerWidth > 800) return;
     var visible = document.querySelector('.greedy-nav .visible-links');
     var hidden = document.querySelector('.greedy-nav .hidden-links');
     var toggle = document.querySelector('.greedy-nav__toggle');
-    if (!visible || !hidden) return;
-    // Move everything back to visible first to restore original order
-    while (hidden.children.length) visible.appendChild(hidden.children[0]);
-    // Now move all to hidden in the correct top-to-bottom order
-    while (visible.children.length) hidden.appendChild(visible.children[0]);
+    if (!visible || !hidden || !ORIGINAL_ORDER) return;
+    // Re-append every item in original order into the hidden dropdown.
+    ORIGINAL_ORDER.forEach(function(li) { hidden.appendChild(li); });
     if (toggle) toggle.classList.remove('hidden');
   }
+
+  function init() {
+    captureOrder();
+    moveAll();
+
+    // Re-apply whenever Minimal Mistakes' greedy nav moves items back to visible.
+    var nav = document.querySelector('.greedy-nav');
+    if (nav && window.MutationObserver) {
+      var obs = new MutationObserver(function() {
+        var visible = document.querySelector('.greedy-nav .visible-links');
+        if (visible && visible.children.length > 0) moveAll();
+      });
+      obs.observe(nav, { childList: true, subtree: true });
+    }
+
+    window.addEventListener('resize', moveAll);
+    // Run again after the window load event in case MM's greedy nav fires late.
+    window.addEventListener('load', function() { setTimeout(moveAll, 0); });
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(moveAll, 50); });
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    setTimeout(moveAll, 50);
+    init();
   }
 })();
 </script>
