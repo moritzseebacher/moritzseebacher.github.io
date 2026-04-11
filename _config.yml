@@ -11,6 +11,12 @@ author:
       icon: "fab fa-linkedin"
       url: "https://www.linkedin.com/in/moritz-seebacher-853974223/"
 
+social:
+  type: Person
+  name: Moritz Seebacher
+  links:
+    - https://www.linkedin.com/in/moritz-seebacher-853974223/
+
 title: "Moritz Seebacher"
 google_site_verification: "i8JezATMaOIN3nw9b1N9otXpL0s1hUbCMuSmR_zfF7Y"
 masthead_title: "Home"
