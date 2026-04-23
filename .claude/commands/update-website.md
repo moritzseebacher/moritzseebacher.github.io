@@ -155,6 +155,18 @@ Live site:      https://moritzseebacher.github.io
 
 List any warnings or failures below the summary so the user can follow up.
 
+Then always append this reminder verbatim:
+
+```
+## Google Search Console — Manual Recrawl Reminder
+
+To speed up Google picking up these changes (from weeks → 1–3 days):
+
+1. Go to https://search.google.com/search-console
+2. URL Inspection → enter https://moritzseebacher.github.io → Request Indexing
+3. Sitemaps (left sidebar) → confirm https://moritzseebacher.github.io/sitemap.xml is submitted
+```
+
 ---
 
 ## Edge Cases
