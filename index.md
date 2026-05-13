@@ -27,7 +27,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 ## Work in Progress {#work-in-progress}
 
 - Career Effects of Online Social Network Access at Labor Market Entry  
-  [Abstract](/abstract_facebook)
+  [Abstract](/abstract_facebook.pdf)
 
 ---
 
