@@ -29,7 +29,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 ## Work in Progress {#work-in-progress}
 
-- Alumni Networks and the College Selectivity Premium in First-Job Placement: Evidence from LinkedIn (with Cäcilia vom Baur, Katia Werkmeister, Ludger Woessmann)
+- Alumni Networks and the College Selectivity Premium in First-Job Placement (with Cäcilia vom Baur, Katia Werkmeister, Ludger Woessmann)
 
 ---
 
