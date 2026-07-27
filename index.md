@@ -10,13 +10,13 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 **I am on the 2026/27 European economics job market.** Expected graduation: Summer 2027.
 
-**Fields:** Labor Economics · Economics of Education · Applied Microeconomics
+**Fields:** Labor Economics · Economics of Education · Social Networks
 
 ---
 
 ## Job Market Paper {#job-market-paper}
 
-**[Career Effects of Online Social Network Access at Labor Market Entry](/Seebacher_Career_Effects_Online_Social_Networks.pdf)** &ensp;[[PDF](/Seebacher_Career_Effects_Online_Social_Networks.pdf)]
+**[Career Effects of Online Social Network Access at Labor Market Entry](/Seebacher_Career_Effects_Online_Social_Networks.pdf)**
 
 **Abstract.** Does access to online social networking platforms at labor market entry affect young workers’ careers? Exploiting the staggered introduction of Facebook across U.S. colleges in a generalized difference-in-differences design, I estimate the causal impact of Facebook access before vs. after labor market entry on the career trajectories of U.S. business and economics students. Using detailed resume data from nearly 900,000 public LinkedIn profiles, I find that students with early access to Facebook are more likely to receive early-career promotions, work in higher-paying jobs, and reach senior leadership roles in their mid-30s to early 40s. I provide evidence that the long-run career effects can be explained by (i) a more successful college-to-work transition, driven by college peers helping each other in the early-career job search process, (ii) improved early-career worker-firm match quality, enabling students to climb up the career ladder within their organizations, and (iii) early-career sorting into higher-quality and career-supporting firms. The results highlight how access to online social networks during a sensitive period of a young worker’s career can facilitate the college-to-work transition, reduce information frictions, and generate long-run career benefits.
 
