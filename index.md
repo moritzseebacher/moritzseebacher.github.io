@@ -19,6 +19,9 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 ## Working Papers {#working-papers}
 
+- [Career Effects of Online Social Network Access at Labor Market Entry](/Seebacher_Career_Effects_Online_Social_Networks.pdf)  
+  <small><strong>Job Market Paper</strong>, July 2026.</small>
+
 - [Multidimensional Skills on LinkedIn Profiles: Measuring Human Capital and the Gender Skill Gap](https://www.iza.org/publications/dp/17896/multidimensional-skills-on-linkedin-profiles-measuring-human-capital-and-the-gender-skill-gap) (with David Dorn, Florian Schoner, Lisa Simon, Ludger Woessmann)  
   <small><strong>IZA Discussion Paper</strong> No. 17896 (2025).</small>
 
@@ -26,8 +29,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 ## Work in Progress {#work-in-progress}
 
-- Career Effects of Online Social Network Access at Labor Market Entry  
-  [Abstract](/abstract_facebook.pdf)
+- Alumni Networks and the College Selectivity Premium in First-Job Placement: Evidence from LinkedIn (with Cäcilia vom Baur, Katia Werkmeister, Ludger Woessmann)
 
 ---
 
@@ -40,6 +42,6 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 ## CV {#cv}
 
-You can find my CV **[here](/CV_Academic_Moritz_Seebacher_06_26_English.pdf)**.
+You can find my CV **[here](/CV_Academic_Moritz_Seebacher_07_26_English.pdf)**.
 
 ---
