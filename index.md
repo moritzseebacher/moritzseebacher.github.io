@@ -8,7 +8,7 @@ author_profile: true
 ## Welcome!
 I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Education](https://www.ifo.de/en/research/ifo-center-for-the-economics-of-education) and [LMU](https://www.lmu.de/en/index.html) Munich. I am an applied microeconomist working at the intersection of education and labor economics. My current research primarily uses LinkedIn data to study how skills, social connections, and technological progress shape career trajectories and labor market inequality.
 
-**I am on the 2026/27 European economics job market.** Expected graduation: Summer 2027.
+**I am on the 2026/27 job market.** Expected graduation: Summer 2027.
 
 **Fields:** Labor Economics · Economics of Education
 
