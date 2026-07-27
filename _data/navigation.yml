@@ -1,4 +1,6 @@
   main:
+    - title: "Job Market Paper"
+      url: "/#job-market-paper"
     - title: "Publications"
       url: "/#publications"
     - title: "Working Papers"
@@ -13,6 +15,8 @@
   sections:
     - title: "Sections"
       children:
+        - title: "Job Market Paper"
+          url: "/#job-market-paper"
         - title: "Publications"
           url: "/#publications"
         - title: "Working Papers"
