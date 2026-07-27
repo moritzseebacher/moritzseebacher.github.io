@@ -10,7 +10,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 **I am on the 2026/27 European economics job market.** Expected graduation: Summer 2027.
 
-**Fields:** Labor Economics · Economics of Education · Social Networks
+**Fields:** Labor Economics · Economics of Education
 
 ---
 
