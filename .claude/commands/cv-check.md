@@ -145,6 +145,12 @@ column, most recent first — never join them with a comma on one wrapped line.
 Title **bold**; journal/series *italic*; everything else roman. Coauthors in
 parentheses directly after the title, with a serial (Oxford) comma and `and` (`R29`).
 
+**Paper titles are never hyperlinked** (`R34`). The contact email is the only link in
+the document. Before the 2026 polish exactly one of four titles carried a link, which
+made that entry read as the important one; linking all four was considered and
+rejected. Plain text keeps every entry visually equal and keeps the printed PDF —
+which is how a CV is usually read — from losing information.
+
 ---
 
 ## 6. Text conventions

@@ -246,14 +246,27 @@ for i, l in enumerate(lines):
         if '(Bachelor)' not in lines[i - 1] and '(Master)' not in lines[i - 1]:
             fail('R30', 'Teaching entry %r has no (Bachelor)/(Master) level tag' % lines[i - 1])
 
-# --------------------------------------------------- 7. PDF is in sync
+# --------------------- 7. hyperlinks: contact email only, never paper titles
+rels = ET.fromstring(zipfile.ZipFile(path).read('word/_rels/document.xml.rels'))
+RNS = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
+targets = {r.get('Id'): r.get('Target') for r in rels
+           if r.get('Type', '').endswith('/hyperlink')}
+for h in root.iter(W + 'hyperlink'):
+    rid = h.get(RNS + 'id')
+    tgt = targets.get(rid, '')
+    if tgt != 'mailto:seebacher@ifo.de':
+        fail('R34', 'Hyperlink to %r. The CV links the contact email only — paper '
+                    'titles stay plain text so no entry looks more "clickable" than '
+                    'another.' % tgt)
+
+# --------------------------------------------------- 8. PDF is in sync
 pdf = os.path.splitext(path)[0] + '.pdf'
 if not os.path.exists(pdf):
     fail('R31', 'No exported PDF next to the .docx (%s)' % os.path.basename(pdf))
 elif os.path.getmtime(pdf) < os.path.getmtime(path):
     fail('R31', 'PDF is older than the .docx — re-export before committing')
 
-# --------------------------------------------------- 8. website link matches
+# --------------------------------------------------- 9. website link matches
 repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 idx = os.path.join(repo, 'index.md')
 if os.path.exists(idx):
