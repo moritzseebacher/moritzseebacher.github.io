@@ -299,6 +299,38 @@ if os.path.exists(idx):
     if stray:
         warn('R33', 'Unlinked CV PDF(s) still in the repo: %s' % stray)
 
+    # R37 — anything stated in both places must agree. Separator style may differ
+    # (the site uses "·", the CV uses ", "); the set of entries may not.
+    def norm(s):
+        return {x.strip().rstrip('.').lower() for x in re.split(r'[·,]', s) if x.strip()}
+
+    cv_fields = None
+    for i, l in enumerate(lines):
+        if l == 'Fields' and i + 1 < len(lines):
+            cv_fields = norm(lines[i + 1])
+            break
+    m = re.search(r'^\*\*Fields:\*\*\s*(.+)$', md, re.M)
+    site_fields = norm(m.group(1)) if m else None
+    if cv_fields is None:
+        fail('R37', 'No Fields section found in the CV')
+    elif site_fields is None:
+        fail('R37', 'index.md has no "**Fields:**" line to check the CV against')
+    elif cv_fields != site_fields:
+        fail('R37', 'Fields differ.\n      CV only:   %s\n      site only: %s'
+             % (sorted(cv_fields - site_fields) or '-',
+                sorted(site_fields - cv_fields) or '-'))
+
+    # titles that appear on both sides must match verbatim
+    for label, needle in (('JMP', 'Career Effects of Online Social Network Access at Labor Market Entry'),
+                          ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
+                          ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
+                          ('policy paper', 'Wie Fahrräder die Bildungschancen')):
+        in_cv = any(needle in l for l in lines)
+        in_site = needle in md
+        if in_cv != in_site:
+            fail('R37', '%s title is on the %s but not the %s: %r'
+                 % (label, 'CV' if in_cv else 'site', 'site' if in_cv else 'CV', needle))
+
 # ------------------------------------------------------------------- report
 print('Sections:   %d' % len(heads))
 print('Tables:     %d   Rows: %d' % (len(tables), sum(len(t.findall(W + 'tr')) for t in tables)))

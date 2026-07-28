@@ -47,6 +47,39 @@ Use Glob or Bash `ls` to check. Then:
 
 ---
 
+## Step 2b — CV ↔ Website Alignment
+
+**Anything stated in both the CV and `index.md` must agree.** These are two faces of
+the same record; drift between them is the most common way a factual error survives.
+
+Run the automated check first — it covers fields and the four paper titles:
+
+```bash
+cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/cv_audit.py
+```
+
+Rule `R37` fails on any mismatch. Then check by eye the items the script cannot
+normalise:
+
+| Item | Must agree on |
+|---|---|
+| **Fields** | The same set of fields. Separator style may differ (site uses `·`, CV uses `,`) |
+| **Paper titles** | Verbatim, including capitalisation — Title Case on both sides |
+| **Citations** | Same order: `Journal, volume(issue), locator, year` |
+| **Coauthor lists** | Same names, same order, serial comma and `and` on both sides |
+| **Position / affiliation** | Same wording for role and institute |
+| **Job Market Paper** | Same title; the CV carries title and year only, the abstract lives on the site |
+
+Only content present in **both** places needs to match. The site may hold things the
+CV omits (expected graduation, job-market year, the JMP abstract) and vice versa
+(teaching, refereeing, awards) — that split is deliberate, see
+`.claude/commands/cv-check.md`.
+
+If the two disagree, **verify against the source** (publisher page, DOI, RePEc) before
+choosing which side to change. Do not simply copy one onto the other.
+
+---
+
 ## Step 3 — External Link Check
 
 Read `index.md` and `_config.yml`. Extract all `http://` and `https://` URLs. For each, run:

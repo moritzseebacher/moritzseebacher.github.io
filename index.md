@@ -10,7 +10,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 **I am on the 2026/27 job market.** Expected graduation: Summer 2027.
 
-**Fields:** Labor Economics · Economics of Education
+**Fields:** Labor Economics · Economics of Education · Big Data Economics
 
 ---
 
@@ -24,7 +24,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 ## Publications {#publications}
 
-- [Pathways to progress: The complementarity of bicycles and road infrastructure for girls’ education](https://www.sciencedirect.com/science/article/pii/S0272775723001309)  
+- [Pathways to Progress: The Complementarity of Bicycles and Road Infrastructure for Girls’ Education](https://www.sciencedirect.com/science/article/pii/S0272775723001309)  
   <small><strong>Economics of Education Review</strong>, 97, 102483, 2023.</small>
 
 ---
