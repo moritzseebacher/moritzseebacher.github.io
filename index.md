@@ -25,27 +25,27 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 ## Publications {#publications}
 
 - [Pathways to progress: The complementarity of bicycles and road infrastructure for girls’ education](https://www.sciencedirect.com/science/article/pii/S0272775723001309)  
-  <small><strong>Economics of Education Review</strong>, Volume 97 (2023), 1–14.</small>
+  <small><strong>Economics of Education Review</strong>, 97, 102483, 2023.</small>
 
 ---
 
 ## Working Papers {#working-papers}
 
-- [Multidimensional Skills on LinkedIn Profiles: Measuring Human Capital and the Gender Skill Gap](https://www.iza.org/publications/dp/17896/multidimensional-skills-on-linkedin-profiles-measuring-human-capital-and-the-gender-skill-gap) (with David Dorn, Florian Schoner, Lisa Simon, Ludger Woessmann)  
-  <small><strong>IZA Discussion Paper</strong> No. 17896 (2025).</small>
+- [Multidimensional Skills on LinkedIn Profiles: Measuring Human Capital and the Gender Skill Gap](https://www.iza.org/publications/dp/17896/multidimensional-skills-on-linkedin-profiles-measuring-human-capital-and-the-gender-skill-gap) (with David Dorn, Florian Schoner, Lisa Simon, and Ludger Woessmann)  
+  <small><strong>IZA Discussion Paper</strong> No. 17896, 2025.</small>
 
 ---
 
 ## Work in Progress {#work-in-progress}
 
-- Alumni Networks and the College Selectivity Premium in First-Job Placement (with Cäcilia vom Baur, Katia Werkmeister, Ludger Woessmann)
+- Alumni Networks and the College Selectivity Premium in First-Job Placement (with Cäcilia vom Baur, Katia Werkmeister, and Ludger Woessmann)
 
 ---
 
 ## Policy Papers (non-refereed) {#policy-papers-non-refereed}
 
 - [Wie Fahrräder die Bildungschancen von Mädchen in Entwicklungsländern verbessern können](https://www.ifo.de/publikationen/2024/aufsatz-zeitschrift/bildungschancen-von-maedchen-in-entwicklungslaendern)  
-  <small><strong>ifo Schnelldienst</strong>, 77(3), 2024, 33–38.</small>
+  <small><strong>ifo Schnelldienst</strong>, 77(3), 33–38, 2024.</small>
   
 ---
 
