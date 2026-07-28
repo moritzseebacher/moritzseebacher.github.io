@@ -35,11 +35,12 @@ ALLOWED_SPACING = {
     'after=0,before=360,line=240,lineRule=auto',   # closing place/date line
 }
 SECTIONS = [
-    'Contact Information', 'Current Position', 'Education', 'Research Visits',
-    'Publications in Refereed Journals', 'Publications in Non-Refereed Journals',
-    'Working Papers', 'Work in Progress', 'Teaching Experience',
-    'Conferences and Workshops', 'Refereeing', 'Work Experience',
-    'Extracurricular Activities', 'Languages', 'Technical Skills',
+    'Contact Information', 'Fields', 'Current Position', 'Education',
+    'Research Visits', 'Job Market Paper', 'Publications', 'Working Papers',
+    'Work in Progress', 'Policy Publications',
+    'Conferences, Workshops, and Invited Seminars', 'Teaching Experience',
+    'Awards and Scholarships', 'Refereeing', 'Research Experience',
+    'Outreach and Volunteering', 'Languages', 'Technical Skills',
 ]
 LOWER_OK = {'a', 'an', 'the', 'and', 'or', 'in', 'of', 'for', 'to', 'on', 'at', 'by', 'vs.'}
 
@@ -201,6 +202,19 @@ for l in lines:
         fail('R23', 'Hyphen between numbers (ranges take an en dash): %r' % l)
     if re.search(r'\d{2}/\d{4}\s*-', l):
         fail('R23', 'Hyphen in a date range: %r' % l)
+    if ';' in l:
+        fail('R35', 'Semicolon: %r. Lists separate with commas throughout.' % l)
+
+# italic is reserved for publication venues and status markers, never field labels
+for r in root.iter(W + 'r'):
+    rPr = r.find(W + 'rPr')
+    if rPr is None or rPr.find(W + 'i') is None:
+        continue
+    txt = ''.join(t.text or '' for t in r.iter(W + 't')).strip()
+    if txt.endswith(':'):
+        fail('R36', 'Italic field label %r. Italic marks journal/series names and '
+                    'status only; inline labels (Host:, Supervisor:, Invited '
+                    'seminars:) are roman.' % txt)
 
 # date ranges must be  MM/YYYY – MM/YYYY  or  MM/YYYY – present
 for l in lines:

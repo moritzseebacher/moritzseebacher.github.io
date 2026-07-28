@@ -49,13 +49,19 @@ versions and would silently change the rendering.
 
 ## 2. Section headings
 
-Fifteen sections, in this order (`R2`):
+Eighteen sections, in this order (`R2`):
 
-`Contact Information` · `Current Position` · `Education` · `Research Visits` ·
-`Publications in Refereed Journals` · `Publications in Non-Refereed Journals` ·
-`Working Papers` · `Work in Progress` · `Teaching Experience` ·
-`Conferences and Workshops` · `Refereeing` · `Work Experience` ·
-`Extracurricular Activities` · `Languages` · `Technical Skills`
+`Contact Information` · `Fields` · `Current Position` · `Education` ·
+`Research Visits` · `Job Market Paper` · `Publications` · `Working Papers` ·
+`Work in Progress` · `Policy Publications` ·
+`Conferences, Workshops, and Invited Seminars` · `Teaching Experience` ·
+`Awards and Scholarships` · `Refereeing` · `Research Experience` ·
+`Outreach and Volunteering` · `Languages` · `Technical Skills`
+
+The ordering is a **job-market CV**: fields and position first, research output
+(JMP → publications → working papers → work in progress) before teaching and
+service, and non-research history last. Policy work sits *below* the academic
+output, never above it.
 
 Every heading is formatted **identically** (`R3`):
 
@@ -114,10 +120,11 @@ declares its spacing explicitly (`R14`).
 | Date under name | `after=160 line=240 lineRule=auto` |
 | Closing place/date line | `before=360 after=0 line=240 lineRule=auto` |
 
-Bullets use the `Listenabsatz` (List Paragraph) style with `numId 12` — Symbol `•`,
-`ind left=720 hanging=360`. That style carries `contextualSpacing`, so consecutive
-bullets sit tight as a group while still spacing away from the next entry. Never
-type a literal `•` character with a manual indent.
+**The CV currently uses no bullets at all** — every entry is a title plus plain detail
+lines. If a bullet is ever needed, use the `Listenabsatz` (List Paragraph) style with
+`numId 12` — Symbol `•`, `ind left=720 hanging=360`. That style carries
+`contextualSpacing`, so consecutive bullets sit tight as a group while still spacing
+away from the next entry. Never type a literal `•` character with a manual indent.
 
 ---
 
@@ -168,6 +175,8 @@ which is how a CV is usually read — from losing information.
 | University | `LMU Munich` — not `Ludwig-Maximilians-University` | `R28` |
 | Teaching | Every entry carries `(Bachelor)` or `(Master)` | `R30` |
 | Conferences | Spell out `Verein für Socialpolitik`; `EEA`/`EALE`/`IAB` may stay abbreviated | — |
+| Lists | **Commas only.** No semicolons anywhere, including inside a run-on cell | `R35` |
+| Italic | Reserved for **journal/series names** and **status markers** (`(scheduled)`). Never for field labels — `Host:`, `Supervisor:`, `Invited seminars:` are roman | `R36` |
 | Whitespace | No double spaces, no leading/trailing spaces, no manual tabs or line breaks inside a paragraph | `R17`–`R19` |
 | Non-breaking spaces | Flagged as warnings — use only where a break would be genuinely bad | `R22` |
 
@@ -220,20 +229,56 @@ Do not commit the `.docx` — `.gitignore` excludes `*.docx` by design.
 ## 9. Deliberate design choices (do not "fix" these)
 
 - **Current Position before Education.** A German-convention ordering the CV keeps.
-- **Awards nested under Education** as bullets rather than a separate Awards section.
-- **Both a header date and a closing `Munich, <date>` line.** Header carries month +
-  year, the closing line the full revision date.
-- **Contact, Languages and Technical Skills use the two-column layout with an empty
-  left cell**, so their content aligns with the dated sections above them.
+- **Header carries the name and the revision month only** — no affiliation line, and
+  no closing `Munich, <date>` signature line (that was a Lebenslauf convention).
+- **Contact, Fields, Languages and Technical Skills use the two-column layout with an
+  empty left cell**, so their content aligns with the dated sections above them.
+- **No location lines.** Entries name the institution; the institution carries the
+  location. Stacked `City, Country` lines are the clearest Lebenslauf marker there is.
+- **`MM/YYYY` dates for spans, bare years for one-off events** (awards, refereeing,
+  conference years). Deliberately kept over the year-only job-market convention.
+- **Research Visits stays its own section** rather than folding into Education.
+- **Invited seminars live in `Conferences, Workshops, and Invited Seminars`**, labelled
+  with an italic `Invited seminars:` / `Conferences:` prefix — not under Research Visits.
+- **Job Market Paper is its own section**, title and year only. The abstract lives on
+  the website; the CV does not duplicate it.
 - **`(Bachelor)` appears on thesis-supervision entries** even though the line below
   says "Supervisor of bachelor thesis" — the redundancy keeps every teaching entry
   parallel.
 
-## 10. Known open items
+## 10. Distinctness from other ifo/LMU CVs
+
+The CV was restructured in July 2026 taking a colleague's job-market CV
+(`a-bertermann.github.io/CV.pdf`) as **inspiration only**. Committees at the same
+institutions may see both, so these differences are deliberate and must be preserved:
+
+| | That CV | This CV |
+|---|---|---|
+| Typeface | LaTeX serif | Arial |
+| Headings | `ALL CAPS` | Title Case bold + 0.5pt rule |
+| Contact | last page | top, under the name |
+| Header | name + affiliation | name + revision month |
+| Education | 3-column | 2-column `date \| content` |
+| Research visit | folded into Education | its own section |
+| Abstracts | under every paper | none — JMP title only |
+| Talks section | `Presentations` | `Conferences, Workshops, and Invited Seminars` |
+| Service | `Service to the Profession` | `Refereeing` |
+| Foot | `Last updated: …` | nothing |
+
+Do not close these gaps in the name of convention.
+
+## 11. Known open items
 
 - No **References** section. Standard on a job-market CV; add before applications.
-- No **Research Fields** line, though `index.md` lists Labor Economics · Economics of
-  Education.
-- **Stacked date ranges** (YES!, Tintenklecks) put the second range beside the role's
-  second line, which can read as if it belongs to that line. No better option exists
-  in a two-column layout; revisit only if the layout changes.
+- **Award years are inferred**, not sourced: the two VEUK awards are dated to the
+  degree completion years (2022, 2020) and the Deutschlandstipendium to the combined
+  study period (2017–2022). Replace with the actual award years when known.
+- **Stacked date ranges** (YES!) put the second range beside the entry's second line,
+  which can read as if it belongs to that line. No better option exists in a
+  two-column layout; revisit only if the layout changes.
+- **Three pages, with page 3 about half full.** Tightening paragraph and heading
+  spacing was tested and does not reach two pages — the content genuinely exceeds
+  two. Reaching two pages requires cutting content (e.g. trimming the seven teaching
+  entries), which is an editorial decision, not a formatting one.
+- `index.md` states the job-market year and expected graduation; the CV deliberately
+  does not duplicate them.
