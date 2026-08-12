@@ -61,6 +61,22 @@ Each entry is a Markdown bullet:
 - Coauthors in parentheses after the title link, only when applicable.
 - Citation in `<small><strong>Venue</strong>, details.</small>`.
 
+### Abstracts
+
+Every entry at working-paper stage or beyond (publications, working papers) carries a collapsible abstract. Work-in-progress entries and non-refereed policy papers do **not**. The job market paper is the exception: its abstract is always visible, not collapsed.
+
+```markdown
+- [Paper Title](https://url) (with Co-Author)  
+  <small><strong>Venue</strong>, details.</small>
+  <details class="abstract"><summary>Abstract</summary><span>Full abstract text…</span></details>
+```
+
+- **No blank line** before `<details>` — the list item must stay "tight". A blank line makes kramdown wrap the item in `<p>`, which invalidly nests `<details>` inside a paragraph.
+- Keep the whole `<details>` on **one line**; the abstract text must not contain blank lines.
+- The abstract must match the published/working-paper version **verbatim** (fix only line-break artifacts from PDF extraction, e.g. `ageskill` → `age-skill`).
+- Styling lives in `assets/css/main.scss` under `--- COLLAPSIBLE PAPER ABSTRACTS ---`.
+- Abstracts are website-only — **never** add them to the CV.
+
 ### Section headings
 
 Use `## Title {#anchor-id}` so navigation links (`/#anchor-id`) resolve correctly.

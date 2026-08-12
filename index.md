@@ -26,6 +26,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 - [Pathways to Progress: The Complementarity of Bicycles and Road Infrastructure for Girls’ Education](https://www.sciencedirect.com/science/article/pii/S0272775723001309)  
   <small><strong>Economics of Education Review</strong>, 97, 102483, 2023.</small>
+  <details class="abstract"><summary>Abstract</summary><span>In which settings can bicycles help to improve girls’ education in low-income countries? This paper analyzes the complementarity between all-weather roads and a bicycle program in India aimed at increasing girls’ secondary school enrollment. Using a triple-difference strategy, I find that the program benefits girls living 3–10 km away from schools with all-weather road connections, increasing their enrollment by 60 percent and reducing the gender enrollment gap by 51 percent. There are no effects for girls in villages without all-weather roads or girls living more than 10 km from school. The findings emphasize the importance and interdependence of road infrastructure, mode of transport, and distance to school for improving girls’ education in India.</span></details>
 
 ---
 
@@ -33,6 +34,7 @@ I am Moritz Seebacher, a PhD student at the [ifo Center for the Economics of Edu
 
 - [Multidimensional Skills on LinkedIn Profiles: Measuring Human Capital and the Gender Skill Gap](https://www.iza.org/publications/dp/17896/multidimensional-skills-on-linkedin-profiles-measuring-human-capital-and-the-gender-skill-gap) (with David Dorn, Florian Schoner, Lisa Simon, and Ludger Woessmann)  
   <small><strong>IZA Discussion Paper</strong> No. 17896, 2025.</small>
+  <details class="abstract"><summary>Abstract</summary><span>We measure human capital using the self-reported skill sets of nearly 9 million U.S. college graduates from professional profiles on LinkedIn. We aggregate skill strings into 48 clusters of general, occupation-specific, and managerial skills. Multidimensional skills can account for several important labor-market patterns. First, the number and composition of skills are systematically related to measures of human-capital investment such as education and work experience. The number of skills increases with experience, and the average age-skill profile closely resembles the well-established concave age-earnings profile. Second, workers who report more skills, especially specific and managerial ones, hold higher-paid jobs. Skill differences account for more earnings variation than detailed measures of education and experience. Third, we document a sizable gender gap in skills. While women and men report nearly equal numbers of skills shortly after college graduation, women’s skill count increases more slowly with age subsequently. A simple quantitative exercise shows that women’s slower skill accumulation can be fully accounted for by reduced work hours associated with motherhood. The resulting gender differences in skills rationalize a substantial proportion of the gender gap in job-based earnings.</span></details>
 
 ---
 
