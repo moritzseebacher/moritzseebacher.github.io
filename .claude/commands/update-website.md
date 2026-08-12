@@ -39,8 +39,10 @@ Use Glob or Bash `ls` to check. Then:
 - Read `index.md`, extract all heading anchors (`{#anchor-id}` patterns or auto-generated from `##` headings).
 - Confirm each nav anchor resolves to a real heading. Report any mismatches.
 
-**Abstract page:**
-- If `index.md` links to `/abstract_facebook`, confirm `abstract_facebook.md` exists.
+**Job market paper:**
+- Confirm `Seebacher_Career_Effects_Online_Social_Networks.pdf` exists at the repo root and is the file `index.md` links to (the filename is deliberately stable across drafts).
+- Extract the PDF title page (`pdftotext -f 1 -l 1 <pdf> -`) and confirm the paper title and abstract match `index.md` verbatim. Report any drift — a stale abstract on the site is a blocker.
+- `ls *.pdf` must show exactly two PDFs: the JMP and the CV. A dated JMP copy left in the root is a leftover — flag it.
 
 **CV filename:**
 - Re-confirm the PDF filename in `index.md` matches the actual file on disk (carry over result from Step 1).
@@ -114,8 +116,7 @@ Stage modified files explicitly — never `git add -A` blindly:
 cd "f:/Academic Website/moseeb98.github.io"
 git add index.md _config.yml _data/navigation.yml
 git add assets/css/main.scss _includes/
-git add abstract_facebook.md
-git add *.pdf    # CV if updated
+git add *.pdf    # CV and/or job market paper if updated
 git add *.jpg *.png  # profile photo if updated
 ```
 

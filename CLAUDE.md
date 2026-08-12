@@ -32,17 +32,16 @@ moseeb98.github.io/
 ├── _includes/footer/custom.html         # Mobile nav JS fix (moves nav items to hidden-links)
 ├── assets/css/main.scss                 # Custom SCSS overrides (avatar sizing, mobile layout)
 ├── index.md                             # Main page — all content sections live here
-├── abstract_facebook.md                 # Standalone abstract page (/abstract_facebook)
-├── Seebacher-Moritz_2023_7_ret_pass_format.jpg  # Profile photo (served from root)
-└── CV_Academic_Moritz_Seebacher_01_26.pdf       # CV (served from root)
+├── Seebacher-Moritz_2023_7_ret_pass_format.jpg    # Profile photo (served from root)
+├── Seebacher_Career_Effects_Online_Social_Networks.pdf  # Job market paper (stable filename)
+└── CV_Academic_Moritz_Seebacher_07_26_English.pdf  # CV (served from root)
 ```
 
 ## Architecture
 
-Single-page academic site with one additional detail page:
+Single-page academic site — all content lives on the index page:
 
-- **`index.md`** — All primary content lives here as sections with anchor IDs: `#publications`, `#working-papers`, `#work-in-progress`, `#policy-papers-non-refereed`, `#cv`.
-- **`abstract_facebook.md`** — Standalone abstract for the Facebook/career paper. Uses `permalink: /abstract_facebook`. Linked from the Work in Progress section.
+- **`index.md`** — All content lives here as sections with anchor IDs: `#job-market-paper`, `#publications`, `#working-papers`, `#work-in-progress`, `#policy-papers-non-refereed`, `#cv`.
 - **`_data/navigation.yml`** — Defines `main` nav (top bar) and `sections` sidebar nav, both pointing to anchors on the index page.
 - **`_config.yml`** — Author profile (name, avatar, bio, email, LinkedIn), theme skin (`default`), plugins, locale, timezone.
 - **`assets/css/main.scss`** — Responsive avatar/sidebar layout overrides (see below).
@@ -68,7 +67,17 @@ Use `## Title {#anchor-id}` so navigation links (`/#anchor-id`) resolve correctl
 
 ### Static files
 
-CV PDF and profile photo are served from the repo root (no subdirectory).
+CV PDF, job market paper PDF, and profile photo are served from the repo root (no subdirectory).
+
+### Job market paper update workflow
+
+Unlike the CV, the JMP PDF keeps a **stable filename** — `Seebacher_Career_Effects_Online_Social_Networks.pdf` — so that links shared on the job market never break. New drafts are dated in the paper itself, not in the filename.
+
+**When a new draft arrives:**
+1. Overwrite `Seebacher_Career_Effects_Online_Social_Networks.pdf` with the new PDF, keeping the filename unchanged. Do not add a dated copy to the repo root.
+2. Diff the new title page against `index.md` (`pdftotext -f 1 -l 1 <pdf> -`) — the title in the `## Job Market Paper` heading and the `**Abstract.**` paragraph must match the PDF verbatim.
+3. If the title changed, update it in `index.md` **and** in the CV (rule `R37` in `.claude/scripts/cv_audit.py` enforces this).
+4. Commit and push — the new PDF goes live at the same URL.
 
 ### CV update workflow
 
