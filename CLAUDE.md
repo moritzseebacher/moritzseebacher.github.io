@@ -63,7 +63,7 @@ Each entry is a Markdown bullet:
 
 ### Abstracts
 
-Every entry at working-paper stage or beyond (publications, working papers) carries a collapsible abstract. Work-in-progress entries and non-refereed policy papers do **not**. The job market paper is the exception: its abstract is always visible, not collapsed.
+Every entry at working-paper stage or beyond (publications, working papers) carries a collapsible abstract. Non-refereed policy papers do **not**. Work-in-progress entries carry one only once an abstract exists (the alumni-networks project does); they stay title-only otherwise, and never link to a PDF. The job market paper is the exception: its abstract is always visible, not collapsed.
 
 ```markdown
 - [Paper Title](https://url) (with Co-Author)  
