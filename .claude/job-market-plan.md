@@ -59,7 +59,11 @@ Two-minute edit, no dependencies. **Owner:** Claude.
 rendering as blank cards; amend `description:` to name the job market year so the Google snippet
 identifies a 2026/27 candidate. **Owner:** Claude. No dependencies.
 
-### 8 — Gemfile and build gate
+### 8 — Gemfile and build gate  **[DONE 25 Aug 2026]**
+Ruby is not installed on this machine, so a `bundle exec` gate cannot run here. Delivered the
+same protection dependency-free instead: `.claude/scripts/site_check.py`, verified against six
+deliberately broken trees. A `Gemfile` is committed for local preview but is untested.
+
 Nothing is built locally before a push today. During the Oct/Nov marathon a broken `main` is a live
 outage on the URL in 200+ applications. Add a `Gemfile` and gate pushes on `bundle exec jekyll build`.
 **Owner:** Claude. **When:** must be in place before applications go out.
@@ -71,12 +75,12 @@ only — the publication and the working paper; the JMP keeps its existing promi
 alumni-networks entry stays title-only. Zero blockers, terms verified, **fully specified and ready to
 run on go-ahead.** **Owner:** Claude.
 
-### 6 — EJME Candidate Directory profile
+### 6 — EJME Candidate Directory profile  **[DRAFTED 25 Aug 2026 — see job-market-drafts.md]**
 Required for signals (up to 5 signals, deadline end of November, transmitted early December).
 Later deadline than everything else, but the profile should exist before applications go out.
 **Owner:** Moritz, content drafted by Claude.
 
-### 5 — Google Scholar and RePEc/IDEAS author profiles
+### 5 — Google Scholar and RePEc/IDEAS author profiles  **[INSTRUCTIONS ISSUED 25 Aug 2026]**
 Neither exists. Indexing takes weeks to propagate, so creating them in August means they are populated
 when committees search in November. Cheap, but the lead time is the reason this outranks the site edits.
 **Owner:** Moritz, content drafted by Claude.
@@ -107,7 +111,7 @@ email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. 
 survives, that is a valid fallback. Once found: add the CC-BY-NC-ND + DOI cover note, host as
 `Seebacher_Pathways_to_Progress.pdf`, link from the citation line. **Owner:** Moritz to supply the file.
 
-### 2 — ifo team page and MGSE placement links
+### 2 — ifo team page and MGSE placement links  **[EMAILS DRAFTED 25 Aug 2026 — see job-market-drafts.md]**
 The deck's explicit requirement: "Link it from your department/placement page." Both are controlled by
 other people, which is exactly why they rank this high — the lead time is not yours to compress. Ask
 ifo web comms to expose `https://moritzseebacher.github.io` on the team page, and ask MGSE to include
