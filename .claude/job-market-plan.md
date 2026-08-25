@@ -1,221 +1,129 @@
-# Job Market 2026/27 — Website & Package Plan
+# Job Market 2026/27 — Website Plan and Status
 
-**Created:** 25 August 2026
-**Source:** *European Job Market Morning*, David Schindler (Tilburg), 41 slides, 17 August 2026
-**Deck deadline for the site:** "Now until September: last iterations on the JMP; package assembled; **website live**."
+**Scope:** this file covers the **website** only. The broader job market plan — every document,
+every deadline, interviews, flyouts, offers — lives outside this repository at
+`F:\Academic Website\job_market_2026\00_guide_and_timeline.md`.
+
+**Source:** *European Job Market Morning*, David Schindler (Tilburg), 17 August 2026.
+**Last updated:** 25 August 2026.
 
 ---
 
-## Decisions taken (25 Aug 2026)
+## The requirement, and whether it is met
+
+The deck asks four things of a candidate's website:
+
+| Requirement | Status |
+|---|---|
+| *"Website live and findable: papers with abstracts and PDFs, CV, email"* | **Met** |
+| *"One stable link to the current version. Not Dropbox, not Google Drive"* | **Met** |
+| *"Link it from your department/placement page"* | **ifo met; MGSE open** |
+| *"Now until September: … website live"* | **Met, ahead of deadline** |
+
+---
+
+## Decisions taken
 
 | Question | Decision |
 |---|---|
-| Letter writers / references | **CV only** — no References section on the website |
-| Ungated PDFs | **Host both** on the site, respecting self-archiving terms; preprint as fallback |
-| Scholarly profiles | **Claude drafts the content, Moritz creates the accounts** |
-| Site scope | **Lean, deck-minimal** — no Teaching section, no research/teaching statements, no separate Contact block |
-| PDF link placement (25 Aug) | **Button next to the `Abstract` toggle**, same row — needs new SCSS under the existing `--- COLLAPSIBLE PAPER ABSTRACTS ---` block |
-| PDF link label (25 Aug) | **`PDF` on both entries** — version status is carried by the CC-BY-NC-ND + DOI cover note on the EER file itself, not by the link text |
-
-Dropped as a result: site References section, Teaching section, posted statements, Contact block
-(sidebar email already satisfies the deck), X/Twitter link.
+| Letter writers on the site | **CV only** — no References section on the website |
+| Ungated PDFs | **Host both**, respecting self-archiving terms |
+| Scholarly profiles | Claude drafts content, Moritz creates the accounts |
+| Site scope | **Lean, deck-minimal** — no Teaching section, no posted statements, no separate Contact block |
+| PDF link placement | Button on the same row as the `Abstract` toggle, **link first** so both pack left |
+| PDF link label | `PDF` on both entries; version status carried by a notice on the file itself |
+| Abstract toggle | Same boxed style as the PDF button, applied to every abstract on the page |
 
 ---
 
-## Verified constraints
+## Done
 
-**Economics of Education Review (Elsevier).**
-- Published version: **cannot** be posted publicly.
-- Accepted manuscript (AAM): **may** go on a personal homepage **immediately, no embargo**.
-- Two conditions attach to the file: it must carry a **CC-BY-NC-ND** notice and **link to the formal
-  publication via DOI**.
-- DOI: `10.1016/j.econedurev.2023.102483`
-- Fallback if the AAM is lost: preprints may be shared "anywhere at any time."
-
-**IZA DP 17896.** Imprint carries no license restriction and no redistribution clause. Authors retain
-rights. Direct URL: `https://docs.iza.org/dp17896.pdf`
-
-**Confirmed gaps.** IDEAS lists no ungated version of the EER paper and no registered RePEc author
-profile. No Google Scholar profile exists. The ifo team page does not expose the website URL. The MGSE
-placement page currently lists the 2025/26 cohort only.
+| # | Item | Notes |
+|---|---|---|
+| 1 | Letter writers — preferences conversation | Names settled; CV section deferred to end September |
+| 3 | EER accepted manuscript hosted | Rebuilt to JMP layout: title page merged, visible hyperlinks, references before the appendix, funding section dropped, provenance note with DOI and CC-BY-NC-ND in the acknowledgements. 33 pages. Source in `F:\Academic Website\Pathways_to_Progress_AAM` |
+| 5 | Google Scholar + RePEc profiles | Both public and verified, linked in the sidebar and in the `sameAs` list |
+| 7 | IZA DP hosted and linked | `Multidimensional_Skills_LinkedIn_IZA_DP17896.pdf` |
+| 8 | Build gate | `.claude/scripts/site_check.py` — verified against six deliberately broken trees. A `Gemfile` is committed but untested |
+| 9 | `og_image` and SEO description | Link previews render; snippet names the job market year |
+| 10 | JMP draft date | "Draft: August 2026" beside the link |
+| 12 | Conventions documented | `CLAUDE.md` covers the action-row markup and the self-archiving rules |
+| — | ifo profile link | Already in place; no action needed |
 
 ---
 
-## Next steps, lowest to highest priority
+## Open — website
 
-### 12 (lowest) — Update CLAUDE.md conventions  **[DONE 25 Aug 2026, alongside step 7]**
-Bookkeeping that follows the work: the static-files list and the paper-entry convention both change
-once PDFs are hosted. **Owner:** Claude. **When:** after step 7 lands.
+### W1. MGSE placement listing
+The one unmet part of *"link it from your department/placement page."* The
+[placement page](https://www.econ.lmu.de/en/faculty/mgse/job-market-candidates-and-placement/)
+lists the 2025/26 cohort, each name linked to a personal site; the 2026/27 cohort is not yet
+posted. Email drafted in `job-market-drafts.md`. **Owner: Moritz. Send in August** — it sits in
+someone else's queue.
 
-### 11 — Request re-indexing in Search Console
-Cannot happen before the content is live. **Owner:** Moritz. **When:** end of September.
+### W2. CV refresh — the last website-visible change
+Two edits to the `.docx`, then one export:
+- Add the **References** section (names settled, goes public end of September)
+- Update **conferences**: COPE 2026 and EEA-ESEM 2026 still read "scheduled" but the JMP
+  acknowledgements now thank participants at both as past events
 
-### 10 — Draft date beside the JMP link  **[DONE 25 Aug 2026]**
-Add "Draft: August 2026" in `index.md` so nobody wonders whether they hold the current version.
-Two-minute edit, no dependencies. **Owner:** Claude.
+Then export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index.md`, delete the July
+PDF, re-run `cv_audit.py`, run `site_check.py`. **Owner: Moritz (docx) + Claude (rest).
+Due 30 September.**
 
-### 9 — og_image and SEO description  **[DONE 25 Aug 2026]**
-`og_image` in `_config.yml` pointing at the profile photo, so applications and shared JMP links stop
-rendering as blank cards; amend `description:` to name the job market year so the Google snippet
-identifies a 2026/27 candidate. **Owner:** Claude. No dependencies.
+### W3. Switch the RePEc link to the IDEAS mirror
+`ideas.repec.org/f/pse845.html` still returns 404 — IDEAS regenerates author pages on a schedule.
+The sidebar currently uses `authors.repec.org/pro/pse845/`, which works. Once the IDEAS URL
+resolves, switch, since that is the URL economists recognise. **Owner: Claude. Re-check early
+September.**
 
-### 8 — Gemfile and build gate  **[DONE 25 Aug 2026]**
-Ruby is not installed on this machine, so a `bundle exec` gate cannot run here. Delivered the
-same protection dependency-free instead: `.claude/scripts/site_check.py`, verified against six
-deliberately broken trees. A `Gemfile` is committed for local preview but is untested.
-
-Nothing is built locally before a push today. During the Oct/Nov marathon a broken `main` is a live
-outage on the URL in 200+ applications. Add a `Gemfile` and gate pushes on `bundle exec jekyll build`.
-**Owner:** Claude. **When:** must be in place before applications go out.
-
-### 7 — Host and link the IZA DP  **[DONE 25 Aug 2026]**
-`Multidimensional_Skills_LinkedIn_IZA_DP17896.pdf` in the repo root, surfaced as a `PDF` button on the
-same row as the `Abstract` toggle. Carries the new SCSS that step 3 then reuses. Applies to two entries
-only — the publication and the working paper; the JMP keeps its existing prominent link and the
-alumni-networks entry stays title-only. Zero blockers, terms verified, **fully specified and ready to
-run on go-ahead.** **Owner:** Claude.
-
-### 6 — EJME Candidate Directory profile  **[DRAFTED 25 Aug 2026 — see job-market-drafts.md]**
-Required for signals (up to 5 signals, deadline end of November, transmitted early December).
-Later deadline than everything else, but the profile should exist before applications go out.
-**Owner:** Moritz, content drafted by Claude.
-
-### 5 — Google Scholar and RePEc/IDEAS author profiles  **[DONE 25 Aug 2026]**
-Both created, verified and public; linked from the sidebar and from the `social.links` sameAs
-list. Scholar: `scholar.google.com/citations?user=qOJVEswAAAAJ` (stored without the `authuser`
-and `hl` parameters — `authuser` is specific to the signed-in Google account slot and
-misdirects other viewers, `hl=de` would force a German interface on everyone).
-RePEc: `authors.repec.org/pro/pse845/`, 11 works claimed, ifo and LMU at 50 percent each.
-
-**Open follow-up:** the canonical IDEAS mirror `ideas.repec.org/f/pse845.html` still returns
-404 — IDEAS regenerates author pages on a schedule. Once it resolves, switch the sidebar link
-to it, since that is the URL economists recognise. Re-check in a few days.
-Neither exists. Indexing takes weeks to propagate, so creating them in August means they are populated
-when committees search in November. Cheap, but the lead time is the reason this outranks the site edits.
-**Owner:** Moritz, content drafted by Claude.
-
-### 4 — CV: conferences refresh and September export
-COPE 2026 and EEA-ESEM 2026 are still listed as "scheduled" but the JMP acknowledgements now cite both
-as past. Export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index.md`, delete the July
-PDF, re-run `cv_audit.py`. **Owner:** Moritz (docx) + Claude (audit, site). **When:** September,
-before applications.
-
-### 3 — Locate the EER accepted manuscript  **[DONE 25 Aug 2026 — live]**
-Source found at `OneDrive/Roads and Bicycles in India/Revision Upload II/`. Rebuilt in
-`F:/Academic Website/Pathways_to_Progress_AAM/` to the JMP layout, with the CC-BY-NC-ND + DOI
-notice on the title page, dated October 2023 (accepted), not 	oday.
-All approved corrections applied: six unambiguous typos, plus British/American spelling, a comma
-splice, acknowledgements grammar, unit spacing (3km -> 3 km), en-dashes for numeric ranges, and
-34 parenthesised citations converted to \citep so they read "(Author, Year)" like the JMP.
-Table files normalised too, with \cmidrule column specs guarded. Verified by diffing the rendered
-text against a pristine baseline build. Structure then aligned to the JMP and IZA convention: funding section dropped, references moved
-ahead of the appendix, and the accepted-manuscript provenance note folded into the
-acknowledgements footnote as one sentence carrying the DOI and CC-BY-NC-ND links. All eight
-bibliography URLs wrapped so every link in the document is live. Final: 33 pages, no LaTeX
-errors, no undefined references, no overfull boxes, 227 link annotations.
-Hosted at `/Seebacher_Pathways_to_Progress.pdf` and linked from the publication entry.
-
-Blocker for the highest-value site change, with unknown resolution time — it may take a search through
-email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. If only the preprint
-survives, that is a valid fallback. Once found: add the CC-BY-NC-ND + DOI cover note, host as
-`Seebacher_Pathways_to_Progress.pdf`, link from the citation line. **Owner:** Moritz to supply the file.
-
-### 2 — ifo team page and MGSE placement links  **[EMAILS DRAFTED 25 Aug 2026 — see job-market-drafts.md]**
-The deck's explicit requirement: "Link it from your department/placement page." Both are controlled by
-other people, which is exactly why they rank this high — the lead time is not yours to compress. Ask
-ifo web comms to expose `https://moritzseebacher.github.io` on the team page, and ask MGSE to include
-you with a link when the 2026/27 cohort posts. **Owner:** Moritz (Claude can draft both emails on request).
-
-### 1 (highest) — Letter writers: preferences conversation, then CV References
-**Conversation DONE (25 Aug 2026).** Remaining: the CV References section, which now has its names and
-is no longer blocked. This moves step 4 (CV export) up to become the top open people-dependent item.
-
-The deck is unambiguous about the timing: "Tell your writers where you apply and what you prefer;
-**now, not in November**. Choose letter writers early enough, discuss with advisors." Highest stakes in
-the entire package, entirely dependent on other people's calendars, and it gates the CV References
-section (step 4). Nothing else on this list matters as much if the letters are weak or late.
-**Owner:** Moritz. The CV section follows through the `cv-check` skill once names are settled.
+### W4. Search Console re-index
+Best done once, after the CV lands, rather than after each change.
+`search.google.com/search-console` → URL Inspection → Request Indexing; confirm the sitemap is
+submitted. **Owner: Moritz. After W2.**
 
 ---
 
-## Today — 25 August 2026
+## Open — adjacent, not website
 
-**Moritz, in roughly an hour:**
-1. ~~Book the advisor conversation on letter writers (step 1).~~ **DONE 25 Aug 2026.**
-2. Spend ten minutes hunting the EER accepted manuscript (step 3) — email, Overleaf, coauthor. Report
-   found / preprint-only either way, because that answer unblocks the site work.
-3. Create the Google Scholar profile (step 5) — needs your login, ~10 minutes, and the indexing clock
-   starts the moment it exists. Setup instructions issued 25 Aug 2026, see below.
-4. Now unblocked by step 1: hand over the agreed reference names for the CV References section (step 4).
+Tracked here only so nothing falls between the two plans. Full detail in
+`F:\Academic Website\job_market_2026\00_guide_and_timeline.md`.
 
-**Claude, on your go-ahead, needs no input from you:**
-Steps 7, 9, 10 in a single commit series — IZA PDF hosted and linked, `og_image`, SEO description,
-JMP draft date. Then step 8 (Gemfile) as a second commit.
-
-**Deliberately not today:** the CV export (step 4) waits for the reference names; step 12 waits for
-step 7; step 11 waits for everything.
+| Item | Owner | Due |
+|---|---|---|
+| Research statement, teaching statement, cover letter master | Moritz | 30 Sep — drafts ready in the job market folder |
+| JMP introduction polish, 4–5 pages | Moritz | 30 Sep |
+| JM spiel drafted and memorised | Moritz | draft Sep, memorised Oct |
+| ifo Working Paper deposit for the JMP | Moritz + advisors | decision open; start early Sep if yes |
+| Letter writers sent package + targets | Moritz | mid-Sep |
+| EJME Candidate Directory profile | Moritz | mid-Nov; text drafted |
+| Signals — EJME up to 5, AEA 2 | Moritz | end Nov |
 
 ---
 
-## Timeline
+## Next actions, in order
 
-| When | Steps |
-|---|---|
-| Today | ~~1 (done)~~, 3 (start), 5 — plus 7, 9, 10 on go-ahead |
-| This week | 2, 8, 6 |
-| Mid-September | 4, 3 (finish), 12 |
-| End September | Deck's "website live" deadline; 11 |
-| Oct/Nov | Applications. Site frozen except JMP draft swaps via the stable-filename workflow |
-| End November | EJME signals due |
+1. **Moritz:** send the MGSE email (W1) — slowest to come back
+2. **Moritz:** retrieve teaching evaluations — the teaching statement is blocked on nothing else
+3. **Moritz:** react to the research and teaching statement drafts
+4. **Moritz + advisors:** decide on the ifo Working Paper deposit
+5. **Claude:** re-check the IDEAS URL in early September (W3)
+6. **Moritz → Claude:** reference names when the CV goes public, then W2 and W4 in one pass
 
 ---
 
-## Appendix A — Google Scholar profile setup (issued 25 Aug 2026)
+## Working notes
 
-Step 5 in the priority list. ~10 minutes. Needs your login, so it cannot be delegated.
+**Self-archiving.** Elsevier permits the accepted manuscript on a personal homepage immediately,
+never the typeset version; the file must carry a CC-BY-NC-ND notice and a DOI link. IZA
+Discussion Papers carry no such restriction.
 
-### Field values to enter
+**Two corrections worth remembering**, both cases of reporting "my tools could not see it" as
+"it is not there":
+- The EER paper *did* have an ungated version all along — ifo Working Paper 382 (2022), under the
+  earlier title *Infrastructure and Girls' Education*. It reports different magnitudes than the
+  published paper, so the hosted accepted manuscript is still the right thing on the site.
+- The ifo profile page *does* link the website. ifo.de sits behind bot protection, so this can
+  only be checked in a browser.
 
-| Field | Value |
-|---|---|
-| Name | `Moritz Seebacher` |
-| Affiliation | `PhD Candidate, ifo Institute and LMU Munich` |
-| Email for verification | `seebacher@ifo.de` — **must** be the institutional address, a personal address will not verify |
-| Areas of interest | `Labor Economics`, `Economics of Education`, `Human Capital`, `Social Networks`, `Big Data Economics` |
-| Homepage | `https://moritzseebacher.github.io` |
-
-Sign in with a **personal** Google account, not an ifo-managed one — the profile has to outlive the
-current affiliation.
-
-### Procedure
-
-1. `scholar.google.com` → hamburger menu → **My profile**.
-2. Fill the fields above. The homepage field is what links Scholar back to the site — do not skip it.
-3. **Articles step.** Scholar proposes article groups matching the name. Claim:
-   - *Pathways to Progress: The Complementarity of Bicycles and Road Infrastructure for Girls' Education*
-     — Economics of Education Review 97, 102483, 2023
-   - *Multidimensional Skills on LinkedIn Profiles: Measuring Human Capital and the Gender Skill Gap*
-     — IZA DP 17896, 2025
-   - *Wie Fahrraeder die Bildungschancen von Maedchen in Entwicklungslaendern verbessern koennen*
-     — ifo Schnelldienst 77(3), 2024
-   Reject everything by **Stefan Seebacher** and **Frank Seebacher** — both are active researchers and
-   are the reason for the settings choice in the next step.
-4. **Settings step.** Choose **"Email me updates to review"**, not automatic application. With the name
-   collisions above, automatic updates will eventually attach someone else's paper to the profile.
-5. **Make the profile public.** It is private by default and invisible to search until this is toggled.
-   This is the single step most often missed.
-6. **Verify the email** from the ifo inbox. Until verified, the profile does not appear in Scholar search.
-7. Add a photo — the same one the website uses, for recognisability across profiles.
-
-### Do not add manually
-
-The job market paper and the alumni-networks project. Scholar crawls PDFs from personal sites and will
-index the JMP on its own; a manual entry cannot carry a link and would later collide with the crawled
-version. The alumni-networks paper has no public draft, so there is nothing to index.
-
-This is a direct argument for step 7 and step 3: **hosting the PDFs is what makes Scholar find them.**
-
-### Afterwards
-
-Send the profile URL over. Adding it to the `_config.yml` sidebar links is a Claude step, alongside the
-RePEc profile when that exists.
+**RePEc items:** four are indexed, not two. Full list with handles in `job-market-drafts.md`.
