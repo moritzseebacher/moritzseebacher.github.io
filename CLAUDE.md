@@ -34,6 +34,7 @@ moseeb98.github.io/
 ├── index.md                             # Main page — all content sections live here
 ├── Seebacher-Moritz_2023_7_ret_pass_format.jpg    # Profile photo (served from root)
 ├── Seebacher_Career_Effects_Online_Social_Networks.pdf  # Job market paper (stable filename)
+├── Multidimensional_Skills_LinkedIn_IZA_DP17896.pdf     # Working paper PDF (stable filename)
 └── CV_Academic_Moritz_Seebacher_07_26_English.pdf  # CV (served from root)
 ```
 
@@ -76,6 +77,28 @@ Every entry at working-paper stage or beyond (publications, working papers) carr
 - The abstract must match the published/working-paper version **verbatim** (fix only line-break artifacts from PDF extraction, e.g. `ageskill` → `age-skill`).
 - Styling lives in `assets/css/main.scss` under `--- COLLAPSIBLE PAPER ABSTRACTS ---`.
 - Abstracts are website-only — **never** add them to the CV.
+
+### Hosted paper PDFs
+
+Publications and working papers that have an ungated PDF hosted in the repo root carry a `PDF`
+button on the same row as the `Abstract` toggle. The `<details>` is wrapped in a
+`<div class="paper-actions">` together with the link:
+
+```markdown
+- [Paper Title](https://publisher-url) (with Co-Author)  
+  <small><strong>Venue</strong>, details.</small>
+  <div class="paper-actions"><details class="abstract"><summary>Abstract</summary><span>Abstract text…</span></details><a class="paper-pdf" href="/File_Name.pdf">PDF</a></div>
+```
+
+- Same tightness rules as the bare `<details>`: no blank line before the `<div>`, whole block on one line.
+- Styling lives in `assets/css/main.scss` under `--- PAPER ACTION ROW ---`.
+- Label is always `PDF`, for every entry. Version status (accepted manuscript vs. published
+  version) is carried by a notice on the file itself, not by the link text.
+- Hosted PDFs use **stable filenames**, like the JMP — never dated ones.
+- Before hosting a published paper, check the publisher's self-archiving terms. For Elsevier
+  (Economics of Education Review), the accepted manuscript may go on a personal homepage
+  immediately, but the typeset version may **not**; the file must carry a CC-BY-NC-ND notice and
+  a DOI link to the version of record. IZA Discussion Papers carry no such restriction.
 
 ### Section headings
 

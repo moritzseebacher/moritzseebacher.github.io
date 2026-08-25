@@ -196,3 +196,40 @@
     left: auto !important;
   }
 }
+
+/* --- PAPER ACTION ROW (abstract toggle + PDF button) --- */
+.paper-actions {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  margin: 0.15em 0 0.6em;
+}
+
+/* The abstract takes the remaining width, so the expanded text is full-width
+   and the PDF button keeps a stable position whether the abstract is open or not. */
+.paper-actions > .abstract {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.paper-actions > .paper-pdf {
+  flex: 0 0 auto;
+  font-size: 0.75em;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: mix($text-color, $background-color, 60%);
+  border: 1px solid $border-color;
+  border-radius: 3px;
+  padding: 0.15em 0.55em;
+  white-space: nowrap;
+}
+
+.paper-actions > .paper-pdf:hover,
+.paper-actions > .paper-pdf:focus {
+  color: $link-color;
+  border-color: $link-color;
+  text-decoration: none;
+}
