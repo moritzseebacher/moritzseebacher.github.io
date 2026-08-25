@@ -22,6 +22,28 @@ triggers.
 
 ---
 
+## Moritz's profile — what counts as a match
+
+Confirmed 25 August 2026.
+
+**Geography: Europe, hard focus.** Non-European postings are heavily deprioritised but still
+listed, because nothing is ever dropped. **Location preferences that genuinely matter:** his
+partner lives in **Munich** and his family is near **Karlsruhe**. Munich and Karlsruhe postings
+carry the heaviest weight in the profile, then Bavaria and Baden-Württemberg, then Germany, then
+the rest of Europe. Treat a Munich or Karlsruhe posting as worth surfacing even if the field fit
+is mediocre — and say why you are surfacing it.
+
+**Position types: all four families count as strong matches** — academic (assistant professor,
+tenure-track, junior professor, lecturer), postdocs and research fellowships, policy institutions
+and central banks (ifo, ZEW, IZA, DIW, IAB, Bundesbank, ECB, OECD), and industry research. His
+stated criterion is *a good worker-firm match with long-run career prospects within Europe*, not
+an academic-only search. Do not quietly rank a good policy-institute role below a mediocre
+professorship.
+
+**Sources: EJM only** for now.
+
+---
+
 ## Step 1 — Scan
 
 ```bash
@@ -67,6 +89,10 @@ signal_sent, interview_date, interview_outcome, flyout_date, offer, notes`
 
 - Read the file first, append, never rewrite wholesale — he edits it by hand between runs.
 - Quote any field containing a comma.
+- **Dates go in as `YYYY-MM-DD`.** The deadline checker parses several formats but ISO is the
+  only one that never misreads; keep the posting's original wording in `notes` if it is vague.
+- `first_review_date` matters as much as `deadline` — a target or first-review date is a real
+  deadline even when the ad calls the later date the deadline.
 - `documents_required` comes from the posting's own list, not a guess.
 - Leave `submitted_date` empty; that is his to fill.
 
@@ -100,10 +126,18 @@ Work out what each application triggers and tell him — do not just note it:
 
 - **Letters.** How many, and does the route differ from EJM's default? If it needs anything
   beyond the standard EJM upload, that is a letter-writer action with a lead time.
-- **Supervisor notification.** If new deadlines have appeared since the last notification, draft
-  the update email. Do not send it. The deck: writers should hear *"now, not in November"*, and
-  the tracker — not your inbox — is the source of truth, so the email should point at it rather
-  than restate it.
+- **Letter-writer notification — the rule Moritz set.** No routine emails. The tracker is the
+  source of truth. Draft a chase **only** when a deadline is inside **14 days** *and* the writers
+  have not confirmed in the tracker that the letter went. Run the check rather than eyeballing it:
+
+  ```bash
+  cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/jm_deadlines.py
+  ```
+
+  Everything under `LETTER FLAG` needs a drafted email; nothing else does. The script suppresses
+  the flag once `letters_in` is confirmed, so a chase never goes out twice. **Also read the
+  `UNREADABLE DATES` section** — those rows are invisible to the check, which is worse than a late
+  flag; fix them into ISO format and say you did.
 - **Signal candidates.** Flag postings worth an EJME or AEA signal: *"Spend a signal only where it
   flips the decision: places that might think you would not come otherwise."* Not safe bets, not
   unreachable places. Keep a running shortlist; signals are due end of November, 5 EJME and 2 AEA.

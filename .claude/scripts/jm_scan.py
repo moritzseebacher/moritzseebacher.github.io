@@ -23,6 +23,7 @@ Usage
 """
 
 import argparse
+import html
 import json
 import os
 import re
@@ -68,8 +69,8 @@ def strip_html(s):
     s = re.sub(r"<script.*?</script>", " ", s, flags=re.S | re.I)
     s = re.sub(r"<style.*?</style>", " ", s, flags=re.S | re.I)
     s = re.sub(r"<[^>]+>", " ", s)
-    s = (s.replace("&amp;", "&").replace("&nbsp;", " ").replace("&#39;", "'")
-           .replace("&quot;", '"').replace("&reg;", "").replace("&times;", ""))
+    s = html.unescape(s)          # handles &#039;, &eacute;, &amp; and the rest
+    s = s.replace("&reg;", "").replace("&times;", "")
     return re.sub(r"\s+", " ", s).strip()
 
 
@@ -200,6 +201,46 @@ DEFAULT_PROFILE = {
 }
 
 
+# ------------------------------------------------------------ geography / expiry
+EUROPE = [
+    "germany", "deutschland", "austria", "österreich", "switzerland", "schweiz",
+    "netherlands", "belgium", "luxembourg", "france", "italy", "italia", "spain",
+    "españa", "portugal", "united kingdom", "u.k.", "england", "scotland", "wales",
+    "ireland", "denmark", "sweden", "norway", "finland", "iceland", "poland",
+    "czech", "czechia", "slovakia", "hungary", "slovenia", "croatia", "romania",
+    "bulgaria", "greece", "estonia", "latvia", "lithuania", "cyprus", "malta",
+    "serbia", "ukraine", "europe",
+    # cities that appear without a country in the location string
+    "munich", "münchen", "berlin", "bonn", "halle", "heidelberg", "mannheim",
+    "frankfurt", "karlsruhe", "zurich", "zürich", "geneva", "lausanne", "basel",
+    "fribourg", "vienna", "wien", "brussels", "amsterdam", "rotterdam", "tilburg",
+    "paris", "cergy", "palaiseau", "toulouse", "milan", "milano", "bocconi", "rome",
+    "barcelona", "bellaterra", "madrid", "lisbon", "oxford", "cambridge", "london",
+    "copenhagen", "stockholm", "oslo", "trondheim", "helsinki", "dublin", "warsaw",
+    "prague", "budapest", "athens", "vilnius", "brig", "wallis",
+]
+
+
+def in_europe(pos):
+    hay = ((pos.get("location") or "") + " " + (pos.get("advertiser") or "")).lower()
+    return any(c in hay for c in EUROPE)
+
+
+def deadline_state(pos, today=None):
+    """Return 'open', 'expired', or 'unknown' from the parsed deadline."""
+    raw = (pos.get("deadline") or "").strip()
+    if not raw:
+        return "unknown"
+    today = today or datetime.now(timezone.utc).date()
+    for fmt in ("%d %b %Y", "%d %B %Y", "%Y-%m-%d", "%B %d, %Y", "%b %d, %Y",
+                "%d.%m.%Y", "%d/%m/%Y"):
+        try:
+            return "expired" if datetime.strptime(raw, fmt).date() < today else "open"
+        except ValueError:
+            continue
+    return "unknown"
+
+
 # ---------------------------------------------------------------------- report
 def write_report(new_positions, profile, dry_run):
     os.makedirs(REPORT_DIR, exist_ok=True)
@@ -212,13 +253,26 @@ def write_report(new_positions, profile, dry_run):
         scored.append((s, why, p))
     scored.sort(key=lambda r: -r[0])
     thr = profile.get("high_relevance_threshold", 8)
-    high = [r for r in scored if r[0] >= thr]
-    low = [r for r in scored if r[0] < thr]
+    # Europe is a gate, not a weight: 'Europe, hard focus' means a non-European posting
+    # never leads the report however well its keywords score. It is still listed.
+    # An expired deadline is noise at the top of a daily digest, so it drops to its own
+    # section rather than being dropped altogether -- the date may have been misparsed.
+    high, low, expired, outside = [], [], [], []
+    for s_, why, p in scored:
+        if deadline_state(p) == "expired":
+            expired.append((s_, why, p))
+        elif not in_europe(p):
+            outside.append((s_, why, p))
+        elif s_ >= thr:
+            high.append((s_, why, p))
+        else:
+            low.append((s_, why, p))
 
     lines = ["# New job market postings — %s" % stamp, "",
              "Source: EJM (econjobmarket.org). %d new posting(s) since the last scan."
              % len(scored), "",
-             "Scores rank only; nothing is filtered out. Everything fetched is listed.", ""]
+             "Scores rank only; nothing is filtered out. Everything fetched is listed,",
+             "including postings outside Europe and ones whose deadline looks past.", ""]
 
     def block(items, heading):
         lines.append("## %s (%d)" % (heading, len(items)))
@@ -243,8 +297,10 @@ def write_report(new_positions, profile, dry_run):
             lines.append("- **Link:** %s" % p["url"])
             lines.append("- **Score %d:** %s" % (s, ", ".join(why) if why else "no keyword hits"))
             lines.append("")
-    block(high, "Likely relevant")
-    block(low, "Lower signal — check anyway")
+    block(high, "Europe — likely relevant")
+    block(low, "Europe — lower signal, check anyway")
+    block(outside, "Outside Europe — deprioritised, listed for completeness")
+    block(expired, "Deadline appears to have passed — verify before discarding")
 
     body = "\n".join(lines)
     if dry_run:
@@ -296,7 +352,6 @@ def main():
         stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
         for p in positions:
             rec = dict(p)
-            rec.pop("text_excerpt", None)   # bulky; only needed for scoring at fetch time
             rec["first_seen"] = stamp
             seen["seen"][p["id"]] = rec
         seen["last_scan"] = stamp
