@@ -33,9 +33,11 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 
+sys_path_added = os.path.dirname(os.path.abspath(__file__))
+
 JM_DIR = r"F:\Academic Website\job_market_2026"
 STATE = os.path.join(JM_DIR, "state", "seen_positions.json")
-PROFILE = os.path.join(JM_DIR, "state", "profile.json")
+# Scoring weights live in jm_score.py, calibrated with Moritz on 25 Aug 2026.
 REPORT_DIR = os.path.join(JM_DIR, "reports")
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
@@ -155,160 +157,72 @@ def list_position_ids(max_pages=10):
 
 
 # --------------------------------------------------------------------- scoring
-def score(pos, profile):
-    """Return (score, reasons). Never excludes -- only ranks."""
-    hay = " ".join([pos.get("title", ""), pos.get("fields", ""),
-                    pos.get("advertiser", ""), pos.get("location", ""),
-                    pos.get("position_type", ""), pos.get("text_excerpt", "")]).lower()
-    pts, why = 0, []
-    for kw, w in profile.get("field_keywords", {}).items():
-        if kw.lower() in hay:
-            pts += w
-            why.append("%s (+%d)" % (kw, w))
-    for kw, w in profile.get("position_keywords", {}).items():
-        if kw.lower() in hay:
-            pts += w
-            why.append("%s (+%d)" % (kw, w))
-    for c, w in profile.get("region_keywords", {}).items():
-        if c.lower() in hay:
-            pts += w
-            why.append("%s (+%d)" % (c, w))
-    for kw, w in profile.get("deprioritise", {}).items():
-        if kw.lower() in hay:
-            pts -= w
-            why.append("%s (-%d)" % (kw, w))
-    return pts, why
-
-
-DEFAULT_PROFILE = {
-    "_comment": "Weights only rank; nothing is ever dropped. Edit freely.",
-    "field_keywords": {
-        "labor": 5, "labour": 5, "education": 5, "human capital": 4,
-        "applied micro": 4, "applied economics": 3, "microeconometrics": 3,
-        "public": 2, "personnel": 3, "development": 2, "networks": 3,
-        "big data": 3, "data science": 2, "digital": 2, "economics of education": 6,
-    },
-    "position_keywords": {
-        "assistant professor": 5, "tenure track": 5, "tenure-track": 5,
-        "lecturer": 4, "postdoc": 3, "post-doc": 3, "postdoctoral": 3,
-        "research economist": 4, "economist": 2, "junior professor": 4,
-    },
-    "region_keywords": {},
-    "deprioritise": {
-        "adjunct": 3, "visiting": 2, "part-time": 3, "teaching-only": 2,
-    },
-    "high_relevance_threshold": 8,
-}
-
-
-# ------------------------------------------------------------ geography / expiry
-EUROPE = [
-    "germany", "deutschland", "austria", "österreich", "switzerland", "schweiz",
-    "netherlands", "belgium", "luxembourg", "france", "italy", "italia", "spain",
-    "españa", "portugal", "united kingdom", "u.k.", "england", "scotland", "wales",
-    "ireland", "denmark", "sweden", "norway", "finland", "iceland", "poland",
-    "czech", "czechia", "slovakia", "hungary", "slovenia", "croatia", "romania",
-    "bulgaria", "greece", "estonia", "latvia", "lithuania", "cyprus", "malta",
-    "serbia", "ukraine", "europe",
-    # cities that appear without a country in the location string
-    "munich", "münchen", "berlin", "bonn", "halle", "heidelberg", "mannheim",
-    "frankfurt", "karlsruhe", "zurich", "zürich", "geneva", "lausanne", "basel",
-    "fribourg", "vienna", "wien", "brussels", "amsterdam", "rotterdam", "tilburg",
-    "paris", "cergy", "palaiseau", "toulouse", "milan", "milano", "bocconi", "rome",
-    "barcelona", "bellaterra", "madrid", "lisbon", "oxford", "cambridge", "london",
-    "copenhagen", "stockholm", "oslo", "trondheim", "helsinki", "dublin", "warsaw",
-    "prague", "budapest", "athens", "vilnius", "brig", "wallis",
-]
-
-
-def in_europe(pos):
-    hay = ((pos.get("location") or "") + " " + (pos.get("advertiser") or "")).lower()
-    return any(c in hay for c in EUROPE)
-
-
-def deadline_state(pos, today=None):
-    """Return 'open', 'expired', or 'unknown' from the parsed deadline."""
-    raw = (pos.get("deadline") or "").strip()
-    if not raw:
-        return "unknown"
-    today = today or datetime.now(timezone.utc).date()
-    for fmt in ("%d %b %Y", "%d %B %Y", "%Y-%m-%d", "%B %d, %Y", "%b %d, %Y",
-                "%d.%m.%Y", "%d/%m/%Y"):
-        try:
-            return "expired" if datetime.strptime(raw, fmt).date() < today else "open"
-        except ValueError:
-            continue
-    return "unknown"
+if sys_path_added not in sys.path:
+    sys.path.insert(0, sys_path_added)
+import jm_score          # noqa: E402  (path must be set first)
 
 
 # ---------------------------------------------------------------------- report
-def write_report(new_positions, profile, dry_run):
+def write_report(new_positions, dry_run):
     os.makedirs(REPORT_DIR, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     path = os.path.join(REPORT_DIR, "scan_%s.md" % stamp)
 
     scored = []
     for p in new_positions:
-        s, why = score(p, profile)
-        scored.append((s, why, p))
-    scored.sort(key=lambda r: -r[0])
-    thr = profile.get("high_relevance_threshold", 8)
-    # Europe is a gate, not a weight: 'Europe, hard focus' means a non-European posting
-    # never leads the report however well its keywords score. It is still listed.
-    # An expired deadline is noise at the top of a daily digest, so it drops to its own
-    # section rather than being dropped altogether -- the date may have been misparsed.
-    high, low, expired, outside = [], [], [], []
-    for s_, why, p in scored:
-        if deadline_state(p) == "expired":
-            expired.append((s_, why, p))
-        elif not in_europe(p):
-            outside.append((s_, why, p))
-        elif s_ >= thr:
-            high.append((s_, why, p))
-        else:
-            low.append((s_, why, p))
+        scored.append((jm_score.score(p), p))
+    scored.sort(key=lambda r: -r[0]["total"])
+    keep = [r for r in scored if r[0]["in_set"]]
+    drop = [r for r in scored if not r[0]["in_set"]]
 
-    lines = ["# New job market postings — %s" % stamp, "",
-             "Source: EJM (econjobmarket.org). %d new posting(s) since the last scan."
-             % len(scored), "",
-             "Scores rank only; nothing is filtered out. Everything fetched is listed,",
-             "including postings outside Europe and ones whose deadline looks past.", ""]
+    lines = ["# Job market scan — %s" % stamp, "",
+             "%d posting(s) scanned. **%d in the choice set** (fit score >= %d); "
+             "%d below threshold." % (len(scored), len(keep), jm_score.THRESHOLD, len(drop)),
+             "",
+             "Fit scores are calibrated to the survey of 25 August 2026. Below-threshold "
+             "postings are listed at the end rather than deleted, so a mis-tuned weight "
+             "can be caught.", ""]
 
-    def block(items, heading):
-        lines.append("## %s (%d)" % (heading, len(items)))
+    lines.append("## In the choice set (%d)" % len(keep))
+    lines.append("")
+    if not keep:
+        lines.append("_None._")
         lines.append("")
-        if not items:
-            lines.append("_None._")
-            lines.append("")
-            return
-        for s, why, p in items:
-            lines.append("### %s" % (p["title"] or "(untitled)"))
-            lines.append("")
-            lines.append("- **Institution:** %s" % (p["advertiser"] or "?"))
-            lines.append("- **Location:** %s" % (p["location"] or "?"))
-            lines.append("- **Type:** %s" % (p["position_type"] or "?"))
-            lines.append("- **Fields:** %s" % (p["fields"] or "?"))
-            lines.append("- **Deadline:** %s%s" % (
-                p["deadline"] or "not stated",
-                ("   (target date: %s)" % p["target_date"]) if p.get("target_date") else ""))
-            if p.get("status"):
-                lines.append("- **Search status:** %s" % p["status"])
-            lines.append("- **Letters:** %s" % (p["letters"] or "?"))
-            lines.append("- **Link:** %s" % p["url"])
-            lines.append("- **Score %d:** %s" % (s, ", ".join(why) if why else "no keyword hits"))
-            lines.append("")
-    block(high, "Europe — likely relevant")
-    block(low, "Europe — lower signal, check anyway")
-    block(outside, "Outside Europe — deprioritised, listed for completeness")
-    block(expired, "Deadline appears to have passed — verify before discarding")
+    for r, p in keep:
+        lines.append("### %d — %s" % (r["total"], p["title"] or "(untitled)"))
+        lines.append("")
+        lines.append("- **Institution:** %s" % (p["advertiser"] or "?"))
+        lines.append("- **Location:** %s" % (p["location"] or "?"))
+        lines.append("- **Type:** %s" % (p["position_type"] or "?"))
+        lines.append("- **Fields:** %s" % (p["fields"] or "?"))
+        lines.append("- **Deadline:** %s%s" % (
+            p["deadline"] or "not stated",
+            ("   (target date: %s)" % p["target_date"]) if p.get("target_date") else ""))
+        if p.get("status"):
+            lines.append("- **Search status:** %s" % p["status"])
+        lines.append("- **Letters:** %s" % (p["letters"] or "?"))
+        lines.append("- **Link:** %s" % p["url"])
+        lines.append("- **Score %d** — %s" % (r["total"], "; ".join(
+            "%s: %s" % (k, v) for k, v in r["breakdown"].items())))
+        lines.append("")
 
-    body = "\n".join(lines)
+    lines.append("## Below threshold (%d) — not in the choice set" % len(drop))
+    lines.append("")
+    for r, p in drop:
+        why = "; ".join(r["gates"]) if r["gates"] else "score %d below %d" % (
+            r["total"], jm_score.THRESHOLD)
+        lines.append("- **%d** · %s — *%s* — %s" % (
+            r["total"], p["title"] or "(untitled)", p["advertiser"] or "?", why))
+        lines.append("  %s" % p["url"])
+    lines.append("")
+
+    body = chr(10).join(lines)
     if dry_run:
         print(body)
-        return None
+        return None, keep, drop
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(body)
-    return path
+    return path, keep, drop
 
 
 # ------------------------------------------------------------------------ main
@@ -317,17 +231,21 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--limit", type=int, default=0, help="cap detail fetches")
     ap.add_argument("--max-pages", type=int, default=10)
+    ap.add_argument("--rescore", action="store_true",
+                    help="re-score everything already cached, without fetching")
     args = ap.parse_args()
-
-    profile = load_json(PROFILE, None)
-    if profile is None:
-        profile = DEFAULT_PROFILE
-        if not args.dry_run:
-            save_json(PROFILE, profile)
-            sys.stderr.write("note: wrote default profile to %s\n" % PROFILE)
 
     seen = load_json(STATE, {"seen": {}, "last_scan": None})
     seen_ids = set(seen.get("seen", {}).keys())
+
+    if args.rescore:
+        cached = list(seen.get("seen", {}).values())
+        sys.stderr.write("rescoring %d cached posting(s), no fetching" % len(cached) + chr(10))
+        path, keep, drop = write_report(cached, args.dry_run)
+        if path:
+            print("report: %s" % path)
+        print("in choice set: %d   below threshold: %d" % (len(keep), len(drop)))
+        return 0
 
     ids = list_position_ids(args.max_pages)
     fresh = [i for i in ids if i not in seen_ids]
@@ -346,7 +264,7 @@ def main():
         time.sleep(POLITE_DELAY)
     sys.stderr.write("\n")
 
-    path = write_report(positions, profile, args.dry_run)
+    path, keep, drop = write_report(positions, args.dry_run)
 
     if not args.dry_run:
         stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -357,7 +275,8 @@ def main():
         seen["last_scan"] = stamp
         save_json(STATE, seen)
         print("report: %s" % path)
-        print("new: %d   total tracked: %d" % (len(positions), len(seen["seen"])))
+        print("new: %d (%d in choice set, %d below threshold)   total tracked: %d"
+              % (len(positions), len(keep), len(drop), len(seen["seen"])))
     return 0
 
 
