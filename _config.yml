@@ -7,6 +7,12 @@ author:
     - label: "Email"
       icon: "fas fa-envelope"
       url: "mailto:seebacher@ifo.de"
+    - label: "Google Scholar"
+      icon: "fab fa-google-scholar"
+      url: "https://scholar.google.com/citations?user=qOJVEswAAAAJ"
+    - label: "RePEc/IDEAS"
+      icon: "fas fa-book"
+      url: "https://authors.repec.org/pro/pse845/"
     - label: "LinkedIn"
       icon: "fab fa-linkedin"
       url: "https://www.linkedin.com/in/moritz-seebacher-853974223/"
@@ -18,6 +24,8 @@ social:
   type: Person
   name: Moritz Seebacher
   links:
+    - https://scholar.google.com/citations?user=qOJVEswAAAAJ
+    - https://authors.repec.org/pro/pse845/
     - https://www.linkedin.com/in/moritz-seebacher-853974223/
     - https://orcid.org/0009-0003-5170-2977
 
