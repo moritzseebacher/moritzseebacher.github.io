@@ -95,7 +95,12 @@ All approved corrections applied: six unambiguous typos, plus British/American s
 splice, acknowledgements grammar, unit spacing (3km -> 3 km), en-dashes for numeric ranges, and
 34 parenthesised citations converted to \citep so they read "(Author, Year)" like the JMP.
 Table files normalised too, with \cmidrule column specs guarded. Verified by diffing the rendered
-text against a pristine baseline build. **Not yet copied into the repo root — awaiting go-ahead.**
+text against a pristine baseline build. Structure then aligned to the JMP and IZA convention: funding section dropped, references moved
+ahead of the appendix, and the accepted-manuscript provenance note folded into the
+acknowledgements footnote as one sentence carrying the DOI and CC-BY-NC-ND links. All eight
+bibliography URLs wrapped so every link in the document is live. Final: 33 pages, no LaTeX
+errors, no undefined references, no overfull boxes, 227 link annotations.
+**Not yet copied into the repo root — awaiting go-ahead.**
 
 Blocker for the highest-value site change, with unknown resolution time — it may take a search through
 email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. If only the preprint
