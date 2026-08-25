@@ -205,8 +205,9 @@
   margin: 0.15em 0 0.6em;
 }
 
-/* The abstract takes the remaining width, so the expanded text is full-width
-   and the PDF button keeps a stable position whether the abstract is open or not. */
+/* The PDF button is fixed-width and sits first; the abstract takes the remaining
+   width so its expanded text is full-width. Both controls stay packed to the left,
+   and neither moves when the abstract is opened or closed. */
 .paper-actions > .abstract {
   flex: 1 1 auto;
   min-width: 0;

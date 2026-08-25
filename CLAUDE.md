@@ -87,10 +87,14 @@ button on the same row as the `Abstract` toggle. The `<details>` is wrapped in a
 ```markdown
 - [Paper Title](https://publisher-url) (with Co-Author)  
   <small><strong>Venue</strong>, details.</small>
-  <div class="paper-actions"><details class="abstract"><summary>Abstract</summary><span>Abstract text…</span></details><a class="paper-pdf" href="/File_Name.pdf">PDF</a></div>
+  <div class="paper-actions"><a class="paper-pdf" href="/File_Name.pdf">PDF</a><details class="abstract"><summary>Abstract</summary><span>Abstract text…</span></details></div>
 ```
 
 - Same tightness rules as the bare `<details>`: no blank line before the `<div>`, whole block on one line.
+- The `PDF` link comes **first** inside the row, before the `<details>`. This is what keeps both
+  controls packed to the left: the link is fixed-width and the abstract absorbs the remaining
+  width, so nothing shifts when the abstract is opened. Putting the link last pushes it to the
+  right-hand edge with a long gap.
 - Styling lives in `assets/css/main.scss` under `--- PAPER ACTION ROW ---`.
 - Label is always `PDF`, for every entry. Version status (accepted manuscript vs. published
   version) is carried by a notice on the file itself, not by the link text.
