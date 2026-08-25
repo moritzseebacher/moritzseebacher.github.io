@@ -43,9 +43,22 @@ website all say the same thing on the same day.
 
 ## 2. Email to ifo web communications (plan step 2)
 
-The [ifo team page](https://www.ifo.de/en/seebacher-m) has a "personal website" field but does
-not currently expose the URL. The deck's requirement is explicit: *"Link it from your
-department/placement page."*
+**STATUS 25 Aug 2026: probably not needed — do not send without checking first.**
+
+Moritz reports the ifo profile already links to his personal website, and a re-check confirms
+the page does carry a "Personal Website" link element. An earlier note in this project said the
+URL was not exposed; that was wrong. It came from an automated read that could not resolve the
+link's `href`, stated as if it were evidence of absence. ifo.de sits behind bot protection, so
+neither curl nor an automated fetcher can follow the link to its destination — this can only be
+verified in a browser.
+
+**The one thing left to check:** open the profile and confirm the link points at
+`https://moritzseebacher.github.io` and not an older or mistyped address. If it is correct,
+skip this email entirely. The draft below is kept only in case the target is stale, in which
+case adapt it to ask for a correction rather than an addition.
+
+The deck's requirement: *"Link it from your department/placement page."* — met on the ifo side,
+still open on the MGSE side (section 3).
 
 ### German
 
