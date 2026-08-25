@@ -140,3 +140,33 @@ included when it is.
 **Note:** the addressee is unknown to me — it should go to whoever administers the MGSE
 placement page (the placement officer or the MGSE coordination office). Worth asking Ludger
 who currently handles it, since a name beats a generic address.
+
+---
+
+## 4. RePEc items to claim (correction, 25 Aug 2026)
+
+Four of Moritz's items are already indexed on RePEc and need claiming on the author profile.
+An earlier note in this project said two; that was wrong — the 2022 ifo Working Paper and the
+ifo Schnelldienst article were missed.
+
+| # | Item | IDEAS handle |
+|---|---|---|
+| 1 | *Pathways to Progress* — Economics of Education Review 97, 102483, 2023 | `ideas.repec.org/a/eee/ecoedu/v97y2023ics0272775723001309.html` |
+| 2 | *Multidimensional Skills on LinkedIn Profiles* — IZA DP 17896, 2025 | `ideas.repec.org/p/iza/izadps/dp17896.html` |
+| 3 | *Infrastructure and Girls' Education: Bicycles, Roads, and the Gender Education Gap in India* — ifo Working Paper 382, 2022 | `ideas.repec.org/p/ces/ifowps/_382.html` |
+| 4 | *Wie Fahrraeder die Bildungschancen von Maedchen in Entwicklungslaendern verbessern koennen* — ifo Schnelldienst 77(3), 33-38, 2024 | `ideas.repec.org/a/ces/ifosdt/v77y2024i03p33-38.html` |
+
+**Note on item 3.** It is the pre-revision version of item 1, under the earlier title, and it
+reports different magnitudes (87 percent enrollment increase, 45 percent gap reduction) than
+the published paper (60 and 51 percent). It carries a free PDF at
+`ifo.de/DocDL/wp-2022-382-seebacher-gender-education-gap-india.pdf`.
+
+Claim it, because it is Moritz's work and it feeds the citation record — but do **not** link it
+from the website. The hosted accepted manuscript supersedes it and matches the published
+results; a superseded draft with different numbers is a liability on a job market page.
+RePEc normally links working paper and published article automatically once both are claimed.
+
+**Relevance for the job market paper.** Item 3 shows the ifo Working Paper route is already
+familiar. Depositing the JMP in the same series would give it a RePEc handle, NEP circulation,
+and a citable ungated home independent of the personal site. Worth raising with Ludger if it
+should happen before applications go out.
