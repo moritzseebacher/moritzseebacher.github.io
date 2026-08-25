@@ -43,18 +43,18 @@ placement page currently lists the 2025/26 cohort only.
 
 ## Next steps, lowest to highest priority
 
-### 12 (lowest) — Update CLAUDE.md conventions
+### 12 (lowest) — Update CLAUDE.md conventions  **[DONE 25 Aug 2026, alongside step 7]**
 Bookkeeping that follows the work: the static-files list and the paper-entry convention both change
 once PDFs are hosted. **Owner:** Claude. **When:** after step 7 lands.
 
 ### 11 — Request re-indexing in Search Console
 Cannot happen before the content is live. **Owner:** Moritz. **When:** end of September.
 
-### 10 — Draft date beside the JMP link
+### 10 — Draft date beside the JMP link  **[DONE 25 Aug 2026]**
 Add "Draft: August 2026" in `index.md` so nobody wonders whether they hold the current version.
 Two-minute edit, no dependencies. **Owner:** Claude.
 
-### 9 — og_image and SEO description
+### 9 — og_image and SEO description  **[DONE 25 Aug 2026]**
 `og_image` in `_config.yml` pointing at the profile photo, so applications and shared JMP links stop
 rendering as blank cards; amend `description:` to name the job market year so the Google snippet
 identifies a 2026/27 candidate. **Owner:** Claude. No dependencies.
@@ -64,7 +64,7 @@ Nothing is built locally before a push today. During the Oct/Nov marathon a brok
 outage on the URL in 200+ applications. Add a `Gemfile` and gate pushes on `bundle exec jekyll build`.
 **Owner:** Claude. **When:** must be in place before applications go out.
 
-### 7 — Host and link the IZA DP
+### 7 — Host and link the IZA DP  **[DONE 25 Aug 2026]**
 `Multidimensional_Skills_LinkedIn_IZA_DP17896.pdf` in the repo root, surfaced as a `PDF` button on the
 same row as the `Abstract` toggle. Carries the new SCSS that step 3 then reuses. Applies to two entries
 only — the publication and the working paper; the JMP keeps its existing prominent link and the
@@ -87,7 +87,12 @@ as past. Export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index
 PDF, re-run `cv_audit.py`. **Owner:** Moritz (docx) + Claude (audit, site). **When:** September,
 before applications.
 
-### 3 — Locate the EER accepted manuscript
+### 3 — Locate the EER accepted manuscript  **[BUILT 25 Aug 2026 — awaiting review before hosting]**
+Source found at `OneDrive/Roads and Bicycles in India/Revision Upload II/`. Rebuilt in
+`F:/Academic Website/Pathways_to_Progress_AAM/` to the JMP layout, with the CC-BY-NC-ND + DOI
+notice on the title page. Six unambiguous typos fixed; further judgment items listed in the
+handover. Not yet copied into the repo root.
+
 Blocker for the highest-value site change, with unknown resolution time — it may take a search through
 email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. If only the preprint
 survives, that is a valid fallback. Once found: add the CC-BY-NC-ND + DOI cover note, host as
