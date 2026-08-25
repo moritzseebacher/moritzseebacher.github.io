@@ -87,7 +87,7 @@ as past. Export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index
 PDF, re-run `cv_audit.py`. **Owner:** Moritz (docx) + Claude (audit, site). **When:** September,
 before applications.
 
-### 3 — Locate the EER accepted manuscript  **[BUILT 25 Aug 2026 — awaiting review before hosting]**
+### 3 — Locate the EER accepted manuscript  **[DONE 25 Aug 2026 — live]**
 Source found at `OneDrive/Roads and Bicycles in India/Revision Upload II/`. Rebuilt in
 `F:/Academic Website/Pathways_to_Progress_AAM/` to the JMP layout, with the CC-BY-NC-ND + DOI
 notice on the title page, dated October 2023 (accepted), not 	oday.
@@ -100,7 +100,7 @@ ahead of the appendix, and the accepted-manuscript provenance note folded into t
 acknowledgements footnote as one sentence carrying the DOI and CC-BY-NC-ND links. All eight
 bibliography URLs wrapped so every link in the document is live. Final: 33 pages, no LaTeX
 errors, no undefined references, no overfull boxes, 227 link annotations.
-**Not yet copied into the repo root — awaiting go-ahead.**
+Hosted at `/Seebacher_Pathways_to_Progress.pdf` and linked from the publication entry.
 
 Blocker for the highest-value site change, with unknown resolution time — it may take a search through
 email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. If only the preprint
