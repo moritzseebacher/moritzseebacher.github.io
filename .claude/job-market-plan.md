@@ -90,8 +90,12 @@ before applications.
 ### 3 — Locate the EER accepted manuscript  **[BUILT 25 Aug 2026 — awaiting review before hosting]**
 Source found at `OneDrive/Roads and Bicycles in India/Revision Upload II/`. Rebuilt in
 `F:/Academic Website/Pathways_to_Progress_AAM/` to the JMP layout, with the CC-BY-NC-ND + DOI
-notice on the title page. Six unambiguous typos fixed; further judgment items listed in the
-handover. Not yet copied into the repo root.
+notice on the title page, dated October 2023 (accepted), not 	oday.
+All approved corrections applied: six unambiguous typos, plus British/American spelling, a comma
+splice, acknowledgements grammar, unit spacing (3km -> 3 km), en-dashes for numeric ranges, and
+34 parenthesised citations converted to \citep so they read "(Author, Year)" like the JMP.
+Table files normalised too, with \cmidrule column specs guarded. Verified by diffing the rendered
+text against a pristine baseline build. **Not yet copied into the repo root — awaiting go-ahead.**
 
 Blocker for the highest-value site change, with unknown resolution time — it may take a search through
 email, Overleaf, or a coauthor. Starting the hunt early is what makes it cheap. If only the preprint
