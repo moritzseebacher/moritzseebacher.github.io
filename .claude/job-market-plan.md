@@ -80,7 +80,16 @@ Required for signals (up to 5 signals, deadline end of November, transmitted ear
 Later deadline than everything else, but the profile should exist before applications go out.
 **Owner:** Moritz, content drafted by Claude.
 
-### 5 — Google Scholar and RePEc/IDEAS author profiles  **[INSTRUCTIONS ISSUED 25 Aug 2026]**
+### 5 — Google Scholar and RePEc/IDEAS author profiles  **[DONE 25 Aug 2026]**
+Both created, verified and public; linked from the sidebar and from the `social.links` sameAs
+list. Scholar: `scholar.google.com/citations?user=qOJVEswAAAAJ` (stored without the `authuser`
+and `hl` parameters — `authuser` is specific to the signed-in Google account slot and
+misdirects other viewers, `hl=de` would force a German interface on everyone).
+RePEc: `authors.repec.org/pro/pse845/`, 11 works claimed, ifo and LMU at 50 percent each.
+
+**Open follow-up:** the canonical IDEAS mirror `ideas.repec.org/f/pse845.html` still returns
+404 — IDEAS regenerates author pages on a schedule. Once it resolves, switch the sidebar link
+to it, since that is the URL economists recognise. Re-check in a few days.
 Neither exists. Indexing takes weeks to propagate, so creating them in August means they are populated
 when committees search in November. Cheap, but the lead time is the reason this outranks the site edits.
 **Owner:** Moritz, content drafted by Claude.
