@@ -35,15 +35,15 @@ from datetime import datetime, timezone
 THRESHOLD = 50
 
 # --------------------------------------------------------------------- fields
-CORE = [
-    "labor economics", "labour economics", "economics of education",
-    "labor and demographic", "labour and demographic", "human capital",
-    "education", "labor", "labour",
+LABOR = [
+    "labor economics", "labour economics", "labor and demographic",
+    "labour and demographic", "personnel economics", "labor", "labour",
 ]
+EDUCATION = ["economics of education", "human capital", "education"]
 ADJACENT = [
     "applied micro", "microeconomics", "public economics", "public",
-    "personnel", "network", "inequality", "big data", "data science",
-    "development", "demographic", "political economy", "urban", "migration",
+    "network", "inequality", "big data", "data science", "development",
+    "demographic", "political economy", "urban", "migration",
     "health economics", "econometrics",
 ]
 OPEN = ["any field", "all fields", "open field", "any area"]
@@ -61,8 +61,10 @@ def field_class(pos):
         hay = (pos.get("title") or "").strip().lower()
     if not hay:
         return "open"
-    if any(k in hay for k in CORE):
-        return "core"
+    if any(k in hay for k in LABOR):
+        return "labor"
+    if any(k in hay for k in EDUCATION):
+        return "education"
     if any(k in hay for k in OPEN):
         return "open"
     if any(k in hay for k in ADJACENT):
@@ -70,7 +72,8 @@ def field_class(pos):
     return "unrelated"
 
 
-FIELD_POINTS = {"core": 20, "adjacent": 13, "open": 12, "unrelated": 0}
+FIELD_POINTS = {"labor": 18, "education": 15, "adjacent": 11,
+                "open": 10, "unrelated": 0}
 
 # ------------------------------------------------------------------ geography
 # Geography is the dominant dimension (45 of 100), but the DCE showed it is about
@@ -78,23 +81,26 @@ FIELD_POINTS = {"core": 20, "adjacent": 13, "open": 12, "unrelated": 0}
 # resourcing differed, while Copenhagen and Amsterdam lost to a Munich postdoc.
 # Tiers are therefore travel distance to partner (Munich) and family (Karlsruhe).
 GEO_TIERS = [
-    (45, ["munich", "münchen", "muenchen", "karlsruhe", "bavaria", "bayern",
+    (40, ["munich", "münchen", "muenchen", "karlsruhe", "bavaria", "bayern",
           "baden-württemberg", "baden-wurttemberg", "stuttgart", "mannheim",
           "heidelberg", "freiburg", "konstanz", "augsburg", "nuremberg",
-          "nürnberg", "regensburg", "ulm", "tübingen", "hohenheim"]),
-    (34, ["germany", "deutschland", "berlin", "bonn", "cologne", "köln",
+          "nürnberg", "regensburg", "ulm", "tübingen", "hohenheim", "würzburg", "wuerzburg",
+          "bamberg", "bayreuth", "passau", "erlangen", "ingolstadt",
+          "heilbronn", "pforzheim", "reutlingen", "aalen", "kaiserslautern",
+          "mainz", "darmstadt", "southern germany", "süddeutschland"]),
+    (30, ["germany", "deutschland", "berlin", "bonn", "cologne", "köln",
           "frankfurt", "hamburg", "halle", "leipzig", "dresden", "essen",
           "düsseldorf", "münster", "göttingen", "kiel", "bremen", "hannover",
           "switzerland", "schweiz", "zurich", "zürich", "basel", "bern",
           "geneva", "lausanne", "st. gallen", "fribourg", "lucerne", "brig",
           "wallis", "austria", "vienna", "wien", "innsbruck", "salzburg",
           "linz", "graz", "strasbourg", "alsace"]),
-    (16, ["netherlands", "amsterdam", "rotterdam", "tilburg", "utrecht",
+    (12, ["netherlands", "amsterdam", "rotterdam", "tilburg", "utrecht",
           "maastricht", "groningen", "leiden", "belgium", "brussels", "leuven",
           "ghent", "luxembourg", "france", "paris", "lyon", "toulouse",
           "cergy", "palaiseau", "milan", "milano", "turin", "bologna",
           "czech", "prague", "poland", "warsaw", "italy"]),
-    (8, ["denmark", "copenhagen", "aarhus", "sweden", "stockholm", "uppsala",
+    (7, ["denmark", "copenhagen", "aarhus", "sweden", "stockholm", "uppsala",
          "lund", "gothenburg", "norway", "oslo", "bergen", "trondheim",
          "finland", "helsinki", "iceland", "spain", "madrid", "barcelona",
          "bellaterra", "valencia", "portugal", "lisbon", "ireland", "dublin",
@@ -116,13 +122,18 @@ def geo_points(pos):
 
 # ------------------------------------------------------------ position family
 JUNIOR = ["assistant professor", "junior professor", "juniorprofessur", "w1",
+          "w2",
           "postdoctoral", "postdoc", "post-doc", "lecturer", "research fellow",
           "research associate"]
 # Neutral: says nothing about seniority either way. Must NOT rescue a senior title --
 # the WZB "Director" posting was typed "Other academic" and slipped through as open rank.
 NEUTRAL = ["other academic", "other nonacademic", "research assistant"]
+# W2 is Moritz's stated target level, so it must NOT gate. Only ranks he cannot
+# realistically reach from a 2027 PhD are gated.
 SENIOR = ["full professor", "tenured professor", "associate professor", "w3",
-          "w2", "chair", "director", "reader", "senior lecturer"]
+          "chair", "director", "reader"]
+TARGET_RANK = ["w2", "w 2", "tenure track w2", "senior researcher",
+               "permanent research", "research group leader"]
 
 
 def seniority(pos):
@@ -150,27 +161,62 @@ def duration_years(pos):
 
 
 def family_points(pos):
+    """Role type and seniority level, 0-18.
+
+    Moritz's stated target: "a W2 professorship or anything similar in terms of
+    seniority or salary that is permanent but not at a University", and he values
+    the independence of working as a researcher. So a permanent institute or
+    central-bank research post sits at the top alongside W2, and a tenure-track
+    W1 just below it as the standard route to W2.
+    """
     hay = ((pos.get("position_type") or "") + " " + (pos.get("title") or "")
            + " " + (pos.get("advertiser") or "")).lower()
-    if any(k in hay for k in ["assistant professor", "junior professor",
-                              "juniorprofessur", "tenure track", "tenure-track", "w1"]):
-        return 21, "tenure-track / assistant professor"
+    if any(k in hay for k in TARGET_RANK):
+        return 18, "W2 / permanent senior research post (target level)"
     if any(k in hay for k in ["research economist", "senior economist", "economist",
                               "central bank", "bundesbank", "oecd", "ecb"]):
-        return 18, "institute or central bank economist"
+        return 16, "institute or central bank economist"
+    if any(k in hay for k in ["assistant professor", "junior professor",
+                              "juniorprofessur", "tenure track", "tenure-track", "w1"]):
+        return 15, "tenure-track / assistant professor"
     if "lecturer" in hay:
-        return 14, "lecturer"
+        return 9, "lecturer"
     if any(k in hay for k in ["postdoc", "post-doc", "postdoctoral",
                               "research fellow", "research associate"]):
-        yrs = duration_years(pos)
-        if yrs is None:
-            return 8, "postdoc (duration not stated)"
-        if yrs >= 4:
-            return 15, "postdoc, %s yrs" % ("4+" if yrs < 99 else "permanent")
-        if yrs >= 3:
-            return 8, "postdoc, 3 yrs"
-        return 3, "postdoc, %d yrs" % yrs
-    return 8, "other"
+        return 8, "postdoc / fellow"
+    return 7, "other"
+
+
+def security_points(pos):
+    """Job security, 0-12. New dimension from Moritz's own account:
+
+    the long-run goal is a secure job in southern Germany within SIX YEARS, and
+    the next step is explicitly a transition unless it is already secure. The DCE
+    could not surface this because none of its profiles varied permanence against
+    an explicit horizon.
+    """
+    hay = ((pos.get("text_excerpt") or "") + " " + (pos.get("title") or "")
+           + " " + (pos.get("position_type") or "")).lower()
+    if any(k in hay for k in ["permanent", "unbefristet", "tenured", "indefinite"]):
+        return 12, "permanent"
+    # An assistant professorship or W1 is a tenure-track-equivalent route to W2 even
+    # when the ad does not use the words, so it earns the same security score.
+    if any(k in hay for k in ["tenure track", "tenure-track", "assistant professor",
+                              "junior professor", "juniorprofessur", "w1"]):
+        return 10, "tenure-track / route to W2"
+    yrs = duration_years(pos)
+    if yrs is not None and yrs < 99:
+        if yrs >= 5:
+            return 7, "%d-year contract" % yrs
+        if yrs == 4:
+            return 6, "4-year contract"
+        if yrs == 3:
+            return 3, "3-year contract"
+        return 1, "%d-year contract (too short for the 6-year horizon)" % yrs
+    fam, _ = family_points(pos)
+    if fam >= 16:
+        return 10, "institute post, duration not stated (usually long-term)"
+    return 4, "duration not stated"
 
 
 # --------------------------------------------------------------- institution
@@ -208,7 +254,7 @@ def infra_points(pos):
         if k in hay:
             pts += w
             hits.append(k.strip())
-    return min(pts, 14), hits
+    return min(pts, 12), hits
 
 
 # ------------------------------------------------------------------- language
@@ -285,11 +331,12 @@ def score(pos, today=None):
         gates.append("deadline passed (%s)" % pos.get("deadline"))
 
     fam, fam_label = family_points(pos)
+    sec, sec_label = security_points(pos)
     inst, inst_label = institution_points(pos)
     infra, infra_hits = infra_points(pos)
     lang, lang_hit = language_penalty(pos)
 
-    total = FIELD_POINTS[fc] + geo + fam + inst + infra - lang
+    total = FIELD_POINTS[fc] + geo + fam + sec + infra - lang
     total = max(0, min(100, total))
 
     if gates:
@@ -299,7 +346,7 @@ def score(pos, today=None):
         "field": "%s (+%d)" % (fc, FIELD_POINTS[fc]),
         "geography": "%s (+%d)" % (geo_hit or "none", geo),
         "family": "%s (+%d)" % (fam_label, fam),
-        "institution": "%s (+%d)" % (inst_label, inst),
+        "security": "%s (+%d)" % (sec_label, sec),
         "infrastructure": "%s (+%d)" % (", ".join(infra_hits) or "none", infra),
     }
     if lang:
@@ -353,8 +400,13 @@ DCE = [
             _p("Munich, Germany", "Assistant Professor", F_ADJ), "B"),
     ("T11", _p("Karlsruhe, Germany", "Postdoctoral Scholar", F_CORE, yrs=3),
             _p("Amsterdam, Netherlands", "Assistant Professor", F_CORE, infra=True), "A"),
+    # T12 is a DELIBERATE OVERRIDE. In the DCE Moritz was indifferent between a
+    # 4-year Munich postdoc and a permanent Munich institute post. He later said
+    # plainly that the goal is a secure job within six years and that anything
+    # short of that is a transition. The model therefore now prefers the permanent
+    # post, and this case is expected to "fail" against the earlier indifference.
     ("T12", _p("Munich, Germany", "Postdoctoral Scholar", F_CORE, yrs=4),
-            _p("Munich, Germany", "Research economist", F_CORE), "="),
+            _p("Munich, Germany", "Research economist", F_CORE), "B"),
 ]
 TOL = 3
 
