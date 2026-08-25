@@ -17,11 +17,22 @@ Academic personal website for Moritz Seebacher (PhD student, ifo Institute / LMU
 ## Build & Preview
 
 ```bash
-bundle exec jekyll serve        # Local dev server (default: http://localhost:4000)
-bundle exec jekyll build        # Build static site to _site/
+python .claude/scripts/site_check.py   # Pre-push validation (no Ruby needed)
+bundle exec jekyll serve               # Local dev server (http://localhost:4000)
+bundle exec jekyll build               # Build static site to _site/
 ```
 
-No Gemfile is currently committed — if adding one, include `github-pages` gem or `jekyll` + `minimal-mistakes-jekyll` for local builds.
+**Always run `site_check.py` before pushing.** It needs only Python and catches the
+breakages that actually occur when editing this site by hand: nav anchors that no longer
+resolve, links to files that do not exist, orphan PDFs left in the repo root, unbalanced
+`<details>`/`<div>` tags, blank lines that break kramdown's tight-list rule, and paper
+action rows whose PDF link is in the wrong position. Exit code 1 means do not push.
+
+A `Gemfile` is committed for local preview via the `github-pages` gem, which pins the same
+dependency versions GitHub Pages uses server-side. **Ruby is not installed on the current
+machine**, so the Gemfile has not been exercised — `bundle install` will need running once
+before `jekyll serve` works. Deployment does not depend on it: Pages builds with its own
+dependency set and ignores the repo's Gemfile.
 
 ## File Structure
 

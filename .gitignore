@@ -14,3 +14,7 @@ _site/
 .DS_Store
 Thumbs.db
 *.stackdump
+
+# Ruby / local Jekyll preview
+.bundle/
+vendor/
