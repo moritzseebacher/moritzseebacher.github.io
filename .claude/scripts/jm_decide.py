@@ -30,6 +30,7 @@ from datetime import datetime, timezone
 JM_DIR = r"F:\Academic Website\job_market_2026"
 STATE = os.path.join(JM_DIR, "state", "seen_positions.json")
 DECISIONS = os.path.join(JM_DIR, "state", "decisions.json")
+CONFIG = os.path.join(JM_DIR, "state", "config.json")
 TRACKER = os.path.join(JM_DIR, "06_application_tracker.csv")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -71,7 +72,16 @@ def country_of(pos):
     return loc.split(",")[-1].strip() if "," in loc else loc
 
 
-def candidates(seen, decisions):
+def reachable(rec, applying_from):
+    """False when the advert closes before Moritz starts applying -- it cannot be
+    acted on, so listing it is noise rather than recall."""
+    if not applying_from:
+        return True
+    raw = iso(rec.get("deadline"))
+    return (raw >= applying_from) if raw else True      # unknown date: keep it
+
+
+def candidates(seen, decisions, applying_from=None):
     """Adverts that pass pre-screening and still need a decision."""
     out = []
     for pid, rec in seen.items():
@@ -80,6 +90,8 @@ def candidates(seen, decisions):
             continue
         r = jm_score.score(rec)
         if not r["in_set"]:
+            continue
+        if not reachable(rec, applying_from):
             continue
         out.append((r["total"], pid, rec, d == "pending"))
     out.sort(key=lambda x: -x[0])
@@ -129,6 +141,8 @@ def main():
 
     seen = load(STATE, {"seen": {}}).get("seen", {})
     dec = load(DECISIONS, {"decisions": {}})
+    cfg = load(CONFIG, {})
+    horizon = None if cfg.get("applying", True) else cfg.get("applying_from")
     D = dec["decisions"]
     stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -136,7 +150,9 @@ def main():
         from collections import Counter
         c = Counter(v["decision"] for v in D.values())
         print("decisions:", dict(c) or "none yet")
-        print("awaiting a decision:", len(candidates(seen, D)))
+        print("awaiting a decision:", len(candidates(seen, D, horizon)))
+        if horizon:
+            print("NOT APPLYING YET - listing only adverts still open on or after %s" % horizon)
         return 0
 
     for flag, name in ((args.add, "added"), (args.skip, "skipped"), (args.defer, "pending")):
@@ -160,7 +176,10 @@ def main():
         return 0
 
     # default: --list
-    cands = candidates(seen, D)
+    cands = candidates(seen, D, horizon)
+    if horizon:
+        print("Not applying until %s - watchlist only, no decisions requested." % horizon)
+        print()
     if not cands:
         print("No adverts awaiting a decision.")
         return 0

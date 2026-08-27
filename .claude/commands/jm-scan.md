@@ -83,6 +83,35 @@ because he checks the ad while deciding.
 Adverts already marked `added` or `skipped` never reappear. Ones marked `pending` come back
 every scan, tagged *(deferred earlier)*, until he decides.
 
+## Step 2a — Check whether he is applying yet
+
+```bash
+cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/jm_decide.py --status
+```
+
+If it prints **NOT APPLYING YET**, `state/config.json` says he has not started applying.
+As of 27 Aug 2026 that is the case: he is still finishing the job market paper and the
+package, and does not intend to apply before **1 October 2026**.
+
+While that holds:
+
+- **Keep scanning and scoring every day he asks.** Nothing may be missed.
+- **Present a watchlist, not a decision queue.** Report what is new and what is worth
+  knowing about, and stop there.
+- **Do NOT run Step 3.** Do not ask advert by advert. He skipped four top-scoring adverts
+  on 27 August purely because it was too early, and reading that as a preference signal
+  would have wrecked a correctly calibrated model.
+- Adverts closing before `applying_from` are dropped from the list automatically — he
+  cannot act on them, so listing them is noise rather than recall.
+
+On the **first scan on or after `applying_from`**, do a catch-up pass over every live
+advert still open, then resume Step 3 normally. Flip `applying` to true in `config.json`
+when he says the package is ready — and tell him you have.
+
+**A skip for timing is not a skip for fit.** If he ever declines adverts because it is too
+early rather than because they are wrong, record them with `--defer`, not `--skip`, so they
+return when he is ready.
+
 ## Step 3 — Ask advert by advert
 
 **This is the required flow. Do not ask for a bulk yes/no.** Go through the candidate list
