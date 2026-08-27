@@ -90,8 +90,8 @@ cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/jm_decide.
 ```
 
 If it prints **NOT APPLYING YET**, `state/config.json` says he has not started applying.
-As of 27 Aug 2026 that is the case: he is still finishing the job market paper and the
-package, and does not intend to apply before **1 October 2026**.
+As of 27 Aug 2026 that is the case: he is finishing the application documents and starts
+applying around **10 September 2026**.
 
 While that holds:
 
@@ -101,8 +101,16 @@ While that holds:
 - **Do NOT run Step 3.** Do not ask advert by advert. He skipped four top-scoring adverts
   on 27 August purely because it was too early, and reading that as a preference signal
   would have wrecked a correctly calibrated model.
-- Adverts closing before `applying_from` are dropped from the list automatically — he
-  cannot act on them, so listing them is noise rather than recall.
+- **Breakthrough alerts override the quiet mode.** An advert that is both a close fit
+  (score at or above `alert_score_min`, default 70) and closing within `alert_days`
+  (default 30) is flagged `** URGENT **` by `--list`. Raise those immediately and ask
+  about them individually, even though he is not applying yet — he asked to be told when
+  something is a really close fit with an urgent deadline, because he may accelerate.
+- **Only adverts that have already closed are dropped.** One closing before he starts is
+  NOT hidden: that is precisely the case worth surfacing. An earlier version of this
+  workflow filtered those out, which would have suppressed exactly what he asked for.
+- Use judgement above the threshold as well. The score is a keyword model; if an advert
+  names both his fields in the title and closes next week, say so even at score 62.
 
 On the **first scan on or after `applying_from`**, do a catch-up pass over every live
 advert still open, then resume Step 3 normally. Flip `applying` to true in `config.json`

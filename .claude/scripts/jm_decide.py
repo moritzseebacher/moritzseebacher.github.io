@@ -72,17 +72,38 @@ def country_of(pos):
     return loc.split(",")[-1].strip() if "," in loc else loc
 
 
-def reachable(rec, applying_from):
-    """False when the advert closes before Moritz starts applying -- it cannot be
-    acted on, so listing it is noise rather than recall."""
-    if not applying_from:
-        return True
-    raw = iso(rec.get("deadline"))
-    return (raw >= applying_from) if raw else True      # unknown date: keep it
+def days_left(rec, today=None):
+    """Days until the advert closes, using whichever of the target date and the
+    deadline comes first. None when no date can be parsed."""
+    today = today or datetime.now(timezone.utc).date()
+    dates = [iso(rec.get("target_date")), iso(rec.get("deadline"))]
+    dates = [d for d in dates if d]
+    if not dates:
+        return None
+    first = min(dates)
+    return (datetime.strptime(first, "%Y-%m-%d").date() - today).days
 
 
-def candidates(seen, decisions, applying_from=None):
-    """Adverts that pass pre-screening and still need a decision."""
+def is_urgent(rec, score, cfg, today=None):
+    """A breakthrough: close fit AND closing soon.
+
+    An advert that closes before Moritz starts applying must NOT be hidden -- that
+    is exactly the case he asked to be told about, because he may accelerate for it.
+    """
+    d = days_left(rec, today)
+    if d is None or d < 0:
+        return False
+    return (score >= cfg.get("alert_score_min", 70)
+            and d <= cfg.get("alert_days", 30))
+
+
+def candidates(seen, decisions, cfg=None, today=None):
+    """Adverts that pass pre-screening and still need a decision.
+
+    Returns (score, id, record, was_deferred, urgent, days_left). Only adverts whose
+    deadline has already PASSED are dropped.
+    """
+    cfg = cfg or {}
     out = []
     for pid, rec in seen.items():
         d = decisions.get(pid, {}).get("decision")
@@ -91,10 +112,12 @@ def candidates(seen, decisions, applying_from=None):
         r = jm_score.score(rec)
         if not r["in_set"]:
             continue
-        if not reachable(rec, applying_from):
-            continue
-        out.append((r["total"], pid, rec, d == "pending"))
-    out.sort(key=lambda x: -x[0])
+        dl = days_left(rec, today)
+        if dl is not None and dl < 0:
+            continue                      # already closed
+        out.append((r["total"], pid, rec, d == "pending",
+                    is_urgent(rec, r["total"], cfg, today), dl))
+    out.sort(key=lambda x: (not x[4], -x[0]))     # urgent first, then by score
     return out
 
 
@@ -142,7 +165,8 @@ def main():
     seen = load(STATE, {"seen": {}}).get("seen", {})
     dec = load(DECISIONS, {"decisions": {}})
     cfg = load(CONFIG, {})
-    horizon = None if cfg.get("applying", True) else cfg.get("applying_from")
+    applying = cfg.get("applying", True)
+    horizon = None if applying else cfg.get("applying_from")
     D = dec["decisions"]
     stamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -150,9 +174,12 @@ def main():
         from collections import Counter
         c = Counter(v["decision"] for v in D.values())
         print("decisions:", dict(c) or "none yet")
-        print("awaiting a decision:", len(candidates(seen, D, horizon)))
+        cands = candidates(seen, D, cfg)
+        print("awaiting a decision:", len(cands))
+        print("URGENT breakthrough alerts:", sum(1 for c in cands if c[4]))
         if horizon:
-            print("NOT APPLYING YET - listing only adverts still open on or after %s" % horizon)
+            print("NOT APPLYING YET - applying from %s. Watchlist only; nothing is" % horizon)
+            print("dropped except adverts already closed. Urgent close fits still alert.")
         return 0
 
     for flag, name in ((args.add, "added"), (args.skip, "skipped"), (args.defer, "pending")):
@@ -176,7 +203,7 @@ def main():
         return 0
 
     # default: --list
-    cands = candidates(seen, D, horizon)
+    cands = candidates(seen, D, cfg)
     if horizon:
         print("Not applying until %s - watchlist only, no decisions requested." % horizon)
         print()
@@ -184,13 +211,18 @@ def main():
         print("No adverts awaiting a decision.")
         return 0
     print("%d advert(s) awaiting a decision\n" % len(cands))
-    for score, pid, rec, was_pending in cands:
-        print("[%s] %d  %s%s" % (pid, score, (rec.get("title") or "?")[:66],
-                                 "   (deferred earlier)" if was_pending else ""))
+    for score, pid, rec, was_pending, urgent, dl in cands:
+        print("%s[%s] %d  %s%s" % ("** URGENT ** " if urgent else "", pid, score,
+                                   (rec.get("title") or "?")[:60],
+                                   "   (deferred earlier)" if was_pending else ""))
         print("      %s" % (rec.get("advertiser") or "?")[:70])
         print("      %s | deadline %s%s" % (
             country_of(rec) or "?", rec.get("deadline") or "not stated",
             ("  target %s" % rec["target_date"]) if rec.get("target_date") else ""))
+        if dl is not None:
+            print("      closes in %d day(s)%s" % (
+                dl, "  -- BEFORE you start applying" if horizon and
+                iso(rec.get("deadline")) and iso(rec.get("deadline")) < horizon else ""))
         print("      %s" % rec.get("url"))
         print()
     return 0
