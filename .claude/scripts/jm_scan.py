@@ -163,10 +163,11 @@ import jm_score          # noqa: E402  (path must be set first)
 
 
 # ---------------------------------------------------------------------- report
-def write_report(new_positions, dry_run):
+def write_report(new_positions, dry_run, prefix="scan"):
     os.makedirs(REPORT_DIR, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    path = os.path.join(REPORT_DIR, "scan_%s.md" % stamp)
+    # rescores go to their own file so they never clobber a daily new-postings report
+    path = os.path.join(REPORT_DIR, "%s_%s.md" % (prefix, stamp))
 
     scored = []
     for p in new_positions:
@@ -241,7 +242,7 @@ def main():
     if args.rescore:
         cached = list(seen.get("seen", {}).values())
         sys.stderr.write("rescoring %d cached posting(s), no fetching" % len(cached) + chr(10))
-        path, keep, drop = write_report(cached, args.dry_run)
+        path, keep, drop = write_report(cached, args.dry_run, prefix="rescore")
         if path:
             print("report: %s" % path)
         print("in choice set: %d   below threshold: %d" % (len(keep), len(drop)))

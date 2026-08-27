@@ -46,7 +46,10 @@ ADJACENT = [
     "demographic", "political economy", "urban", "migration",
     "health economics", "econometrics",
 ]
-OPEN = ["any field", "all fields", "open field", "any area"]
+# EJM writes "Other" when an ad does not categorise its field. That is missing
+# information, not a mismatch -- treating it as unrelated gated out a W2
+# professorship at Bonn, which is exactly Moritz's target rank.
+OPEN = ["any field", "all fields", "open field", "any area", "other"]
 # Everything not matched above is UNRELATED and gated out: finance, macro,
 # monetary, IO, trade, environmental, agricultural, experimental, behavioral,
 # management information technology, operations, marketing, accounting.
@@ -65,10 +68,10 @@ def field_class(pos):
         return "labor"
     if any(k in hay for k in EDUCATION):
         return "education"
-    if any(k in hay for k in OPEN):
-        return "open"
     if any(k in hay for k in ADJACENT):
         return "adjacent"
+    if any(k in hay for k in OPEN):
+        return "open"
     return "unrelated"
 
 
@@ -197,7 +200,8 @@ def security_points(pos):
     """
     hay = ((pos.get("text_excerpt") or "") + " " + (pos.get("title") or "")
            + " " + (pos.get("position_type") or "")).lower()
-    if any(k in hay for k in ["permanent", "unbefristet", "tenured", "indefinite"]):
+    if any(k in hay for k in ["permanent", "unbefristet", "tenured", "indefinite",
+                              "continuous", "continuing", "open-ended"]):
         return 12, "permanent"
     # An assistant professorship or W1 is a tenure-track-equivalent route to W2 even
     # when the ad does not use the words, so it earns the same security score.
