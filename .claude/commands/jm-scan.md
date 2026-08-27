@@ -59,42 +59,64 @@ the postings as seen, so tomorrow's run shows only genuinely new ones.
 - If the scan errors or returns nothing, **say so plainly**. A silent empty report reads as
   "nothing new today", which is a different and much worse claim.
 
-## Step 2 — Triage and report
+## Step 2 — Candidate list
 
-Read the generated report. Do **not** paste it at him — it is raw. Write a short digest:
+Read the generated report. Do **not** paste it at him — it is raw. Then produce the
+**candidate list**: every advert that passed pre-screening and has no decision yet.
 
-- **Lead with anything urgent.** A first-review or target date inside 14 days goes first,
-  regardless of relevance score. The deck: *"Watch for early deadlines"* — some 2026/27 positions
-  close in mid-October.
-- **Group by relevance,** using the report's ordering, but read the field lists yourself. The
-  scorer is keyword matching; it has no judgement. Promote and demote as you see fit, and say when
-  you disagree with it.
-- **One line per posting:** institution, position, location, deadline, why it fits or does not.
-- **Say what is missing.** If a posting has no deadline or no field list, flag that rather than
-  padding it.
-- If nothing new: say so in one sentence. Do not manufacture content.
+```bash
+cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/jm_decide.py --list
+```
 
-Then ask which he wants to apply to. Offer a fourth option beyond yes/no/later: **"needs a look"**
-for postings where the ad is ambiguous and he should read it himself before deciding.
+That prints each candidate with id, fit score, institution, country, deadline **and the
+advert URL**. Present it as a short digest — one line per advert, always including the link,
+because he checks the ad while deciding.
 
-## Step 3 — On approval, per approved position
+- **Lead with anything urgent.** A deadline or first-review date inside 14 days goes first,
+  whatever the score. The deck: *"Watch for early deadlines."*
+- **Read the field lists yourself.** The scorer is keyword matching with no judgement.
+  Promote, demote, and say plainly where you disagree with it.
+- **Say what is missing.** No deadline, no field list, unclear contract — flag it rather
+  than padding the entry.
+- If nothing new: say so in one sentence. Never manufacture content.
 
-### 3a. Tracker
+Adverts already marked `added` or `skipped` never reappear. Ones marked `pending` come back
+every scan, tagged *(deferred earlier)*, until he decides.
 
-Append a row to `F:\Academic Website\job_market_2026\06_application_tracker.csv`.
+## Step 3 — Ask advert by advert
 
-Columns: `institution, country, position, platform, ad_link, deadline, first_review_date,
-documents_required, n_letters, letters_route, cover_letter_customised, submitted_date, letters_in,
-signal_sent, interview_date, interview_outcome, flyout_date, offer, notes`
+**This is the required flow. Do not ask for a bulk yes/no.** Go through the candidate list
+one advert at a time, using AskUserQuestion. It takes at most four questions per call, so
+work in batches of four, highest score first.
 
-- Read the file first, append, never rewrite wholesale — he edits it by hand between runs.
-- Quote any field containing a comma.
-- **Dates go in as `YYYY-MM-DD`.** The deadline checker parses several formats but ISO is the
-  only one that never misreads; keep the posting's original wording in `notes` if it is vague.
-- `first_review_date` matters as much as `deadline` — a target or first-review date is a real
-  deadline even when the ad calls the later date the deadline.
-- `documents_required` comes from the posting's own list, not a guess.
-- Leave `submitted_date` empty; that is his to fill.
+For each advert, one question. Put the **URL in the option description** so he can open the ad
+while deciding, and give four options:
+
+| Option | Effect |
+|---|---|
+| **Add to tracker** | `--add <id>` — writes the row, never asked about again |
+| **Skip** | `--skip <id>` — never asked about again |
+| **Needs a closer look** | `--defer <id>` — reappears on the next scan |
+| **Add, and it is a signal candidate** | `--add <id>`, plus note it on the signal shortlist |
+
+Give him what he needs to decide in the question itself: institution, location, rank,
+contract, field list, deadline, and the one thing that makes it a good or bad fit. Where the
+score and your own reading disagree, say so in the question rather than hiding it.
+
+Then record every decision:
+
+```bash
+python .claude/scripts/jm_decide.py --add 12601      # or --skip / --defer
+```
+
+Never write tracker rows by hand — the script handles CSV quoting, converts EJM's
+`27 Sep 2026` into the ISO dates the deadline checker needs, and refuses to write a
+duplicate row for an advert already tracked.
+
+## Step 3a — After the approvals
+
+Confirm what changed: how many added, skipped, deferred, and the tracker row count. Then for
+each **added** advert, give the tailoring advice below.
 
 ### 3b. Tailoring advice
 
@@ -151,6 +173,19 @@ State plainly: how many scanned, how many new, how many approved, how many track
 and what needs him next. If you drafted an email, show it and say it is unsent.
 
 ---
+
+## State files
+
+| File | Holds |
+|---|---|
+| `state/seen_positions.json` | every advert ever fetched, with its parsed fields |
+| `state/decisions.json` | added / skipped / pending, per advert |
+| `06_application_tracker.csv` | the applications he actually committed to |
+| `reports/scan_DATE.md` | that day's new adverts |
+| `reports/rescore_DATE.md` | everything re-scored after a weight change |
+
+Deleting `seen_positions.json` makes the next scan re-report everything. Deleting
+`decisions.json` makes it re-ask about everything.
 
 ## Configuration
 
