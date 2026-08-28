@@ -5,7 +5,7 @@ every deadline, interviews, flyouts, offers — lives outside this repository at
 `F:\Academic Website\job_market_2026\00_guide_and_timeline.md`.
 
 **Source:** *European Job Market Morning*, David Schindler (Tilburg), 17 August 2026.
-**Last updated:** 25 August 2026.
+**Last updated:** 28 August 2026.
 
 ---
 
@@ -48,6 +48,8 @@ The deck asks four things of a candidate's website:
 | 9 | `og_image` and SEO description | Link previews render; snippet names the job market year |
 | 10 | JMP draft date | "Draft: August 2026" beside the link |
 | 12 | Conventions documented | `CLAUDE.md` covers the action-row markup and the self-archiving rules |
+| 13 | RePEc link on the IDEAS mirror (was W3) | `ideas.repec.org/f/pse845.html` resolves as of 28 Aug 2026 and is the canonical page; sidebar and `sameAs` both repointed |
+| 14 | JMP draft of 28 August 2026 posted | Same stable filename. Title and abstract unchanged and verified verbatim; 118 → 121 pages; acknowledgements now also thank David Dorn |
 | — | ifo profile link | Already in place; no action needed |
 
 ---
@@ -71,13 +73,7 @@ Then export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index.md`
 PDF, re-run `cv_audit.py`, run `site_check.py`. **Owner: Moritz (docx) + Claude (rest).
 Due 30 September.**
 
-### W3. Switch the RePEc link to the IDEAS mirror
-`ideas.repec.org/f/pse845.html` still returns 404 — IDEAS regenerates author pages on a schedule.
-The sidebar currently uses `authors.repec.org/pro/pse845/`, which works. Once the IDEAS URL
-resolves, switch, since that is the URL economists recognise. **Owner: Claude. Re-check early
-September.**
-
-### W4. Search Console re-index
+### W3. Search Console re-index
 Best done once, after the CV lands, rather than after each change.
 `search.google.com/search-console` → URL Inspection → Request Indexing; confirm the sitemap is
 submitted. **Owner: Moritz. After W2.**
@@ -107,8 +103,7 @@ Tracked here only so nothing falls between the two plans. Full detail in
 2. **Moritz:** retrieve teaching evaluations — the teaching statement is blocked on nothing else
 3. **Moritz:** react to the research and teaching statement drafts
 4. **Moritz + advisors:** decide on the ifo Working Paper deposit
-5. **Claude:** re-check the IDEAS URL in early September (W3)
-6. **Moritz → Claude:** reference names when the CV goes public, then W2 and W4 in one pass
+5. **Moritz → Claude:** reference names when the CV goes public, then W2 and W3 in one pass
 
 ---
 
