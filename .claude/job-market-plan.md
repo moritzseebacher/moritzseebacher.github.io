@@ -50,6 +50,9 @@ The deck asks four things of a candidate's website:
 | 12 | Conventions documented | `CLAUDE.md` covers the action-row markup and the self-archiving rules |
 | 13 | RePEc link on the IDEAS mirror (was W3) | `ideas.repec.org/f/pse845.html` resolves as of 28 Aug 2026 and is the canonical page; sidebar and `sameAs` both repointed |
 | 14 | JMP draft of 28 August 2026 posted | Same stable filename. Title and abstract unchanged and verified verbatim; 118 → 121 pages; acknowledgements now also thank David Dorn |
+| 15 | Entry layout aligned | JMP became a bullet like every other section, its abstract expanded by default but collapsible; the abstract toggle moved ahead of the PDF button so every toggle lines up, including work-in-progress; draft date dropped; link underline dropped |
+| 16 | Mobile `…` menu hardened | Toggle forced visible against the theme's greedy nav, dropdown move no longer thrashes the DOM, Escape closes. Verified by static analysis of the theme JS/CSS, **not yet on a real phone** |
+| 17 | CV 08/26 export | Abstracts under every paper (verbatim, 10 pt justified), revision month moved from the header to a `Last updated` foot line. Four pages, up from three |
 | — | ifo profile link | Already in place; no action needed |
 
 ---
@@ -63,14 +66,14 @@ lists the 2025/26 cohort, each name linked to a personal site; the 2026/27 cohor
 posted. Email drafted in `job-market-drafts.md`. **Owner: Moritz. Send in August** — it sits in
 someone else's queue.
 
-### W2. CV refresh — the last website-visible change
-Two edits to the `.docx`, then one export:
+### W2. CV refresh — second pass
+The 08/26 export already carries the abstracts and the foot revision date. Two edits remain:
 - Add the **References** section (names settled, goes public end of September)
 - Update **conferences**: COPE 2026 and EEA-ESEM 2026 still read "scheduled" but the JMP
   acknowledgements now thank participants at both as past events
 
-Then export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index.md`, delete the July
-PDF, re-run `cv_audit.py`, run `site_check.py`. **Owner: Moritz (docx) + Claude (rest).
+Then export `CV_Academic_Moritz_Seebacher_09_26_English.pdf`, repoint `index.md`, delete the
+August PDF, re-run `cv_audit.py`, run `site_check.py`. **Owner: Moritz (docx) + Claude (rest).
 Due 30 September.**
 
 ### W3. Search Console re-index
