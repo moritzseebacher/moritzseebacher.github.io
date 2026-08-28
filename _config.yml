@@ -12,7 +12,7 @@ author:
       url: "https://scholar.google.com/citations?user=qOJVEswAAAAJ"
     - label: "RePEc/IDEAS"
       icon: "fas fa-book"
-      url: "https://authors.repec.org/pro/pse845/"
+      url: "https://ideas.repec.org/f/pse845.html"
     - label: "LinkedIn"
       icon: "fab fa-linkedin"
       url: "https://www.linkedin.com/in/moritz-seebacher-853974223/"
@@ -25,7 +25,7 @@ social:
   name: Moritz Seebacher
   links:
     - https://scholar.google.com/citations?user=qOJVEswAAAAJ
-    - https://authors.repec.org/pro/pse845/
+    - https://ideas.repec.org/f/pse845.html
     - https://www.linkedin.com/in/moritz-seebacher-853974223/
     - https://orcid.org/0009-0003-5170-2977
 
