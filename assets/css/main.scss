@@ -177,10 +177,28 @@
     overflow: hidden !important;
   }
 
-  /* Push the "…" toggle to the right edge of the nav bar */
+  /* Push the "…" toggle to the right edge of the nav bar. margin-left:auto is
+     enough on its own -- do NOT add `order` here. Reordering a flex item also
+     reorders when it paints, which let the toggle's overlay (below) paint over
+     the dropdown instead of behind it. */
   .greedy-nav__toggle {
     margin-left: auto !important;
-    order: 99;
+  }
+
+  /* The theme dims the page behind an open menu with a fixed, 90%-opaque white
+     sheet stretched over the whole viewport. On a phone that reads as the page
+     blanking out rather than as a menu opening, so switch it off. */
+  .greedy-nav__toggle::before,
+  .greedy-nav__toggle.close::before {
+    display: none !important;
+  }
+
+  /* Neither the dropdown nor that overlay carries a z-index, which left which
+     one won up to painting order. Pin the dropdown above the rest of the
+     masthead, and keep it inside the viewport on a narrow screen. */
+  .greedy-nav .hidden-links {
+    z-index: 30 !important;
+    max-width: calc(100vw - 2em);
   }
 
   /* The theme's greedy nav re-adds .hidden to the toggle whenever it decides

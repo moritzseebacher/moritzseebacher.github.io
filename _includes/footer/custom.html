@@ -107,6 +107,15 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' || e.keyCode === 27) closeMenu(el());
     });
+
+    /* The theme's own "tap outside to close" is its full-screen overlay, which
+       we switch off on mobile because it blanks the page. Close the menu here
+       instead. Taps on the nav itself are left to the theme's own handlers. */
+    document.addEventListener('click', function (e) {
+      var nav = document.querySelector('nav.greedy-nav');
+      if (!nav || nav.contains(e.target)) return;
+      closeMenu(el());
+    });
   }
 
   if (document.readyState === 'loading') {
