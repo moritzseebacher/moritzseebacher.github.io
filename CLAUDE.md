@@ -75,38 +75,41 @@ Each entry is a Markdown bullet:
 
 ### Abstracts
 
-Every entry at working-paper stage or beyond (publications, working papers) carries a collapsible abstract. Non-refereed policy papers do **not**. Work-in-progress entries carry one only once an abstract exists (the alumni-networks project does); they stay title-only otherwise, and never link to a PDF. The job market paper is the exception: its abstract is always visible, not collapsed.
+Every entry at working-paper stage or beyond (publications, working papers) carries a
+collapsible abstract. Non-refereed policy papers do **not**. Work-in-progress entries carry one
+only once an abstract exists (the alumni-networks project does); they stay title-only otherwise,
+and never link to a PDF. The job market paper is the exception: its abstract is **expanded by
+default** (`<details ... open>`), but it collapses like the rest.
+
+Every abstract sits inside a `<div class="paper-actions">` row, whether or not the entry has a
+PDF. The `<details>` holds **only its `<summary>`**; the abstract text is a sibling
+`<span class="abstract-text">`:
 
 ```markdown
 - [Paper Title](https://url) (with Co-Author)  
   <small><strong>Venue</strong>, details.</small>
-  <details class="abstract"><summary>Abstract</summary><span>Full abstract text…</span></details>
+  <div class="paper-actions"><details class="abstract"><summary>Abstract</summary></details><a class="paper-pdf" href="/File_Name.pdf">PDF</a><span class="abstract-text">Full abstract text…</span></div>
 ```
 
-- **No blank line** before `<details>` — the list item must stay "tight". A blank line makes kramdown wrap the item in `<p>`, which invalidly nests `<details>` inside a paragraph.
-- Keep the whole `<details>` on **one line**; the abstract text must not contain blank lines.
-- The abstract must match the published/working-paper version **verbatim** (fix only line-break artifacts from PDF extraction, e.g. `ageskill` → `age-skill`).
-- Styling lives in `assets/css/main.scss` under `--- COLLAPSIBLE PAPER ABSTRACTS ---`.
-- Abstracts are website-only — **never** add them to the CV.
+- **The abstract toggle comes first, the PDF link second.** This is what lines every toggle on
+  the page up at the same x, including entries with no PDF such as work in progress. Splitting
+  the text out of the `<details>` is what makes that possible: the `<details>` stays
+  button-width so the PDF button sits beside it rather than being pushed to the right-hand
+  edge, and the text, a flex sibling with a `100%` basis, wraps onto its own full-width row.
+- **No blank line** before the `<div>` — the list item must stay "tight". A blank line makes
+  kramdown wrap the item in `<p>`, which invalidly nests a block element inside a paragraph.
+- Keep the whole row on **one line**; the abstract text must not contain blank lines.
+- The abstract must match the published/working-paper version **verbatim** (fix only line-break
+  artifacts from PDF extraction, e.g. `ageskill` → `age-skill`).
+- Styling lives in `assets/css/main.scss` under `--- COLLAPSIBLE PAPER ABSTRACTS ---` and
+  `--- PAPER ACTION ROW ---`.
+- Abstracts are website-only — see the CV spec for what the CV carries.
 
 ### Hosted paper PDFs
 
-Publications and working papers that have an ungated PDF hosted in the repo root carry a `PDF`
-button on the same row as the `Abstract` toggle. The `<details>` is wrapped in a
-`<div class="paper-actions">` together with the link:
+Publications and working papers with an ungated PDF in the repo root carry a `PDF` button in the
+action row, directly after the abstract toggle (see above for the markup).
 
-```markdown
-- [Paper Title](https://publisher-url) (with Co-Author)  
-  <small><strong>Venue</strong>, details.</small>
-  <div class="paper-actions"><a class="paper-pdf" href="/File_Name.pdf">PDF</a><details class="abstract"><summary>Abstract</summary><span>Abstract text…</span></details></div>
-```
-
-- Same tightness rules as the bare `<details>`: no blank line before the `<div>`, whole block on one line.
-- The `PDF` link comes **first** inside the row, before the `<details>`. This is what keeps both
-  controls packed to the left: the link is fixed-width and the abstract absorbs the remaining
-  width, so nothing shifts when the abstract is opened. Putting the link last pushes it to the
-  right-hand edge with a long gap.
-- Styling lives in `assets/css/main.scss` under `--- PAPER ACTION ROW ---`.
 - Label is always `PDF`, for every entry. Version status (accepted manuscript vs. published
   version) is carried by a notice on the file itself, not by the link text.
 - Hosted PDFs use **stable filenames**, like the JMP — never dated ones.
@@ -114,6 +117,11 @@ button on the same row as the `Abstract` toggle. The `<details>` is wrapped in a
   (Economics of Education Review), the accepted manuscript may go on a personal homepage
   immediately, but the typeset version may **not**; the file must carry a CC-BY-NC-ND notice and
   a DOI link to the version of record. IZA Discussion Papers carry no such restriction.
+
+### Links
+
+Links are distinguished by **colour only** — the theme's hover underline is switched off in
+`assets/css/main.scss` under `--- LINKS ---`.
 
 ### Section headings
 

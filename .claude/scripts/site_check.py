@@ -12,7 +12,9 @@ without needing Ruby or any third-party package:
   6. Paper entries keep kramdown's "tight list" rule -- no blank line before
      the <div class="paper-actions"> or bare <details>, which would otherwise
      wrap the item in <p> and invalidly nest a block element inside it
-  7. Abstract entries carry the markup the conventions in CLAUDE.md require
+  7. Abstract entries carry the markup the conventions in CLAUDE.md require:
+     the toggle first, the PDF link second, and the abstract text in a
+     sibling <span class="abstract-text">
 
 Usage:  python .claude/scripts/site_check.py
 Exit code 0 = safe to push, 1 = problems found.
@@ -94,25 +96,38 @@ for i, line in enumerate(lines):
                  "(the item gets wrapped in <p>)" % (i + 1, stripped[:34]))
 
 # --- 7. abstract markup conventions ----------------------------------------
-for m in re.finditer(r'<div class="paper-actions">(.*?)</div>', body, re.S):
+rows = list(re.finditer(r'<div class="paper-actions">(.*?)</div>', body, re.S))
+for m in rows:
     row = m.group(1)
     if "\n" in row:
         fail("a paper-actions row spans several lines; it must stay on one line")
-    if not row.startswith('<a class="paper-pdf"'):
-        fail("a paper-actions row does not start with the PDF link; the link must "
-             "come first or the button is pushed to the right-hand edge")
-    if "<details" not in row:
-        fail("a paper-actions row contains no <details> abstract")
-n_rows = len(re.findall(r'<div class="paper-actions">', body))
-n_abs = len(re.findall(r'<details class="abstract">', body))
-notes.append("%d paper-action rows, %d collapsible abstracts" % (n_rows, n_abs))
+    if not row.startswith('<details class="abstract"'):
+        fail("a paper-actions row does not start with the abstract toggle; the "
+             "toggle must come first so every abstract on the page lines up, "
+             "including entries that have no PDF")
+    if '<span class="abstract-text">' not in row:
+        fail("a paper-actions row has no <span class=\"abstract-text\"> body")
+    if row.count("<details") != 1:
+        fail("a paper-actions row does not hold exactly one <details> abstract")
 
-for m in re.finditer(r"<details class=\"abstract\">(.*?)</details>", body, re.S):
-    inner = m.group(1)
-    if not inner.startswith("<summary>Abstract</summary><span>"):
-        fail("an abstract does not follow <summary>Abstract</summary><span>… form")
-    if "\n\n" in inner:
-        fail("an abstract contains a blank line; it must stay on one line")
+n_open = len(re.findall(r'<details class="abstract" open>', body))
+notes.append("%d paper-action rows, %d expanded by default" % (len(rows), n_open))
+
+# the <details> carries the summary only -- the body is its sibling, which is
+# what keeps the toggle button-width while the text spans the full row
+for m in re.finditer(r'<details class="abstract"(?: open)?>(.*?)</details>', body, re.S):
+    if m.group(1) != "<summary>Abstract</summary>":
+        fail("a <details class=\"abstract\"> holds more than <summary>Abstract</summary>; "
+             "the abstract text belongs in the sibling <span class=\"abstract-text\">")
+
+for m in re.finditer(r'<span class="abstract-text">(.*?)</span>', body, re.S):
+    if "\n" in m.group(1):
+        fail("an abstract spans several lines; it must stay on one line")
+
+# every abstract must sit inside an action row -- a bare <details> would not line
+# up with the others
+if len(re.findall(r"<details", body)) != len(rows):
+    fail("a <details> abstract sits outside a <div class=\"paper-actions\"> row")
 
 # --- report ----------------------------------------------------------------
 print("Site check: %s" % ROOT)

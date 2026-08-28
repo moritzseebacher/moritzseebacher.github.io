@@ -1,48 +1,112 @@
 <script>
-(function() {
-  var ORIGINAL_ORDER = null;
+/* Mobile navigation fix.
 
-  function captureOrder() {
-    if (ORIGINAL_ORDER) return;
-    var visible = document.querySelector('.greedy-nav .visible-links');
-    var hidden = document.querySelector('.greedy-nav .hidden-links');
-    if (!visible) return;
-    var items = [];
-    Array.prototype.forEach.call(visible.children, function(li) { items.push(li); });
-    if (hidden) {
-      Array.prototype.forEach.call(hidden.children, function(li) { items.push(li); });
-    }
-    if (items.length) ORIGINAL_ORDER = items;
+   Minimal Mistakes' "greedy nav" measures the nav bar and keeps as many links
+   visible as fit, moving the rest into the .hidden-links dropdown behind the
+   toggle button. On a phone we want *every* item in that dropdown, so the "…"
+   button is the only nav control.
+
+   The theme recalculates on load and on every resize, each time pulling items
+   back out of the dropdown, so this script re-applies the move afterwards and
+   restores the theme's own behaviour above the breakpoint. Keep the 800px
+   breakpoint here in sync with assets/css/main.scss. */
+(function () {
+  var BREAKPOINT = 800;
+  var order = null;   // every nav <li>, in the order the page rendered them
+  var queued = false;
+
+  function el() {
+    return {
+      nav: document.querySelector('nav.greedy-nav'),
+      visible: document.querySelector('nav.greedy-nav .visible-links'),
+      hidden: document.querySelector('nav.greedy-nav .hidden-links'),
+      toggle: document.querySelector('nav.greedy-nav .greedy-nav__toggle')
+    };
   }
 
-  function moveAll() {
-    if (window.innerWidth > 800) return;
-    var visible = document.querySelector('.greedy-nav .visible-links');
-    var hidden = document.querySelector('.greedy-nav .hidden-links');
-    var toggle = document.querySelector('.greedy-nav__toggle');
-    if (!visible || !hidden || !ORIGINAL_ORDER) return;
-    // Re-append every item in original order into the hidden dropdown.
-    ORIGINAL_ORDER.forEach(function(li) { hidden.appendChild(li); });
-    if (toggle) toggle.classList.remove('hidden');
+  function isMobile() {
+    return window.innerWidth <= BREAKPOINT;
+  }
+
+  function captureOrder(n) {
+    if (order || !n.visible) return;
+    var items = Array.prototype.slice.call(n.visible.children);
+    if (n.hidden) {
+      items = items.concat(Array.prototype.slice.call(n.hidden.children));
+    }
+    if (items.length) order = items;
+  }
+
+  /* Re-appending nodes that are already in place still fires the observer, so
+     only touch the DOM when the target list is not already correct. */
+  function alreadyInPlace(target) {
+    if (target.children.length !== order.length) return false;
+    for (var i = 0; i < order.length; i++) {
+      if (target.children[i] !== order[i]) return false;
+    }
+    return true;
+  }
+
+  function closeMenu(n) {
+    if (n.hidden) n.hidden.classList.add('hidden');
+    if (n.toggle) n.toggle.classList.remove('close');
+  }
+
+  function apply() {
+    var n = el();
+    if (!n.nav || !n.visible || !n.hidden) return;
+    captureOrder(n);
+    if (!order) return;
+
+    var target = isMobile() ? n.hidden : n.visible;
+    if (!alreadyInPlace(target)) {
+      order.forEach(function (li) { target.appendChild(li); });
+    }
+
+    if (isMobile()) {
+      // The theme hides the button whenever it thinks nothing is overflowing.
+      if (n.toggle) n.toggle.classList.remove('hidden');
+    } else {
+      // Leaving mobile: hand control back to the theme with the menu shut.
+      closeMenu(n);
+    }
+  }
+
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    (window.requestAnimationFrame || window.setTimeout)(function () {
+      queued = false;
+      apply();
+    }, 0);
   }
 
   function init() {
-    captureOrder();
-    moveAll();
+    apply();
 
-    // Re-apply whenever Minimal Mistakes' greedy nav moves items back to visible.
-    var nav = document.querySelector('.greedy-nav');
-    if (nav && window.MutationObserver) {
-      var obs = new MutationObserver(function() {
-        var visible = document.querySelector('.greedy-nav .visible-links');
-        if (visible && visible.children.length > 0) moveAll();
-      });
-      obs.observe(nav, { childList: true, subtree: true });
+    var n = el();
+
+    /* The theme moves items back out of the dropdown on load and on resize.
+       Watch for that and re-apply. */
+    if (n.nav && window.MutationObserver) {
+      new MutationObserver(function () {
+        var visible = document.querySelector('nav.greedy-nav .visible-links');
+        var hidden = document.querySelector('nav.greedy-nav .hidden-links');
+        if (!visible || !hidden) return;
+        if (isMobile() ? visible.children.length > 0 : hidden.children.length > 0) {
+          schedule();
+        }
+      }).observe(n.nav, { childList: true, subtree: true });
     }
 
-    window.addEventListener('resize', moveAll);
-    // Run again after the window load event in case MM's greedy nav fires late.
-    window.addEventListener('load', function() { setTimeout(moveAll, 0); });
+    window.addEventListener('resize', schedule);
+    window.addEventListener('orientationchange', schedule);
+    window.addEventListener('load', schedule);
+
+    // Escape closes the dropdown; the theme only closes it on click or hover-out.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' || e.keyCode === 27) closeMenu(el());
+    });
   }
 
   if (document.readyState === 'loading') {

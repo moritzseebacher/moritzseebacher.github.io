@@ -10,7 +10,7 @@
 
 /* --- COLLAPSIBLE PAPER ABSTRACTS --- */
 .abstract {
-  margin: 0.15em 0 0.6em;
+  margin: 0;
 }
 
 .abstract > summary {
@@ -51,14 +51,21 @@
   border-color: $link-color;
 }
 
-.abstract > span {
-  display: block;
+/* The abstract body is a sibling of the <details>, not a child of it, so the
+   toggle can stay button-width while the text spans the whole row. The details
+   holds only its <summary>; this span is revealed by the [open] ~ selector. */
+.abstract-text {
+  display: none;
   margin: 0.4em 0 0;
   padding-left: 1em;
   border-left: 2px solid $border-color;
   font-size: 0.8em;
   line-height: 1.6;
   text-align: justify;
+}
+
+.abstract[open] ~ .abstract-text {
+  display: block;
 }
 
 /* --- DESKTOP & LARGE TABLETS --- */
@@ -90,7 +97,7 @@
 /* --- PHONES (and small tablets) --- */
 @media (max-width: 800px) {
   /* Ragged-right reads better than justified in a narrow column */
-  .abstract > span {
+  .abstract-text {
     text-align: left;
     padding-left: 0.75em;
   }
@@ -176,6 +183,14 @@
     order: 99;
   }
 
+  /* The theme's greedy nav re-adds .hidden to the toggle whenever it decides
+     nothing is overflowing. On mobile every item lives in the dropdown, so the
+     button must stay visible regardless. .hidden sets display AND visibility. */
+  .greedy-nav .greedy-nav__toggle.hidden {
+    display: block !important;
+    visibility: visible !important;
+  }
+
   /* Replace hamburger icon with "…" */
   .greedy-nav__toggle .navicon {
     display: none !important;
@@ -204,24 +219,31 @@
 }
 
 /* --- PAPER ACTION ROW (abstract toggle + PDF button) --- */
+/* The Abstract toggle always comes first, so every toggle on the page begins at
+   the same x -- including entries that have no PDF, such as work in progress.
+   Because the <details> wraps only its <summary>, it stays button-width and the
+   PDF button sits directly beside it instead of being pushed to the right edge.
+   The abstract body is a sibling flex item with a 100% basis, so it wraps onto
+   its own full-width row when opened. */
 .paper-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.9em;
+  gap: 0 0.9em;
   margin: 0.15em 0 0.6em;
 }
 
-/* The PDF button is fixed-width and sits first; the abstract takes the remaining
-   width so its expanded text is full-width. Both controls stay packed to the left,
-   and neither moves when the abstract is opened or closed. */
-.paper-actions > .abstract {
-  flex: 1 1 auto;
+.paper-actions > .abstract,
+.paper-actions > .paper-pdf {
+  flex: 0 0 auto;
+}
+
+.paper-actions > .abstract-text {
+  flex: 1 1 100%;
   min-width: 0;
-  margin: 0;
 }
 
 .paper-actions > .paper-pdf {
-  flex: 0 0 auto;
   font-size: 0.75em;
   font-weight: bold;
   letter-spacing: 0.02em;
@@ -238,5 +260,18 @@
 .paper-actions > .paper-pdf:focus {
   color: $link-color;
   border-color: $link-color;
+  text-decoration: none;
+}
+
+/* --- LINKS: colour carries the affordance, no underline --- */
+.page__content a:not(.btn),
+.page__content a:not(.btn):hover,
+.page__content a:not(.btn):focus,
+.author__urls a,
+.author__urls a:hover,
+.author__urls a:focus,
+.page__footer a,
+.page__footer a:hover,
+.page__footer a:focus {
   text-decoration: none;
 }
