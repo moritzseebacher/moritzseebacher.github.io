@@ -37,11 +37,11 @@ design rule, change it in **both** this file and `cv_audit.py`.
 | Text width | **10204 twips** — every table must equal this |
 | Font | **Arial throughout.** No exceptions, no theme fonts |
 | Body size | 11 pt (`w:sz` 22) |
-| Location lines | 10 pt (`w:sz` 20) — the only smaller text |
+| Paper abstracts | 10 pt (`w:sz` 20), justified — the only smaller text |
 | Name | 28 pt (`w:sz` 56), centred |
-| Date under name | 14 pt (`w:sz` 28), centred |
 
-Only these four sizes may appear (`R16`). Every run pins its own font and size
+Only these three sizes may appear (`R16`); 14 pt (`w:sz` 28) stays on the allowlist
+from when the header carried a revision month. Every run pins its own font and size
 explicitly (`R15`) — never rely on inherited defaults, which differ between Word
 versions and would silently change the rendering.
 
@@ -117,8 +117,8 @@ declares its spacing explicitly (`R14`).
 | All table/body paragraphs | `after=80 line=276 lineRule=auto` |
 | Section headings | `before=240 after=80 line=240 lineRule=auto` |
 | Name | `before=480 after=80 line=240 lineRule=auto` |
-| Date under name | `after=160 line=240 lineRule=auto` |
-| Closing place/date line | `before=360 after=0 line=240 lineRule=auto` |
+| Date under name | `after=160 line=240 lineRule=auto` — on the allowlist, no longer used |
+| Closing `Last updated` line | `before=360 after=0 line=240 lineRule=auto` |
 
 **The CV currently uses no bullets at all** — every entry is a title plus plain detail
 lines. If a bullet is ever needed, use the `Listenabsatz` (List Paragraph) style with
@@ -151,6 +151,12 @@ column, most recent first — never join them with a comma on one wrapped line.
 
 Title **bold**; journal/series *italic*; everything else roman. Coauthors in
 parentheses directly after the title, with a serial (Oxford) comma and `and` (`R29`).
+
+**Every paper carries its abstract**, in a paragraph directly under the entry: Arial
+10 pt, roman, justified, standard body spacing. Publications, working papers, work in
+progress and the job market paper all take one; **policy publications do not**, matching
+the website. The text must be the abstract **verbatim**, identical to the website — never
+paraphrased, or the two drift. Adopted August 2026; see §10.
 
 **Paper titles are never hyperlinked** (`R34`). The contact email is the only link in
 the document. Before the 2026 polish exactly one of four titles carried a link, which
@@ -229,8 +235,10 @@ Do not commit the `.docx` — `.gitignore` excludes `*.docx` by design.
 ## 9. Deliberate design choices (do not "fix" these)
 
 - **Current Position before Education.** A German-convention ordering the CV keeps.
-- **Header carries the name and the revision month only** — no affiliation line, and
-  no closing `Munich, <date>` signature line (that was a Lebenslauf convention).
+- **Header carries the name only** — no affiliation line, no revision month, and no
+  closing `Munich, <date>` signature line (that was a Lebenslauf convention). The
+  revision date sits at the **foot** instead, as `Last updated: <D Month YYYY>`, so it
+  appears once and reads as freshness rather than as a subtitle.
 - **Contact, Fields, Languages and Technical Skills use the two-column layout with an
   empty left cell**, so their content aligns with the dated sections above them.
 - **No location lines.** Entries name the institution; the institution carries the
@@ -240,8 +248,7 @@ Do not commit the `.docx` — `.gitignore` excludes `*.docx` by design.
 - **Research Visits stays its own section** rather than folding into Education.
 - **Invited seminars live in `Conferences, Workshops, and Invited Seminars`**, labelled
   with an italic `Invited seminars:` / `Conferences:` prefix — not under Research Visits.
-- **Job Market Paper is its own section**, title and year only. The abstract lives on
-  the website; the CV does not duplicate it.
+- **Job Market Paper is its own section**, title and year, followed by its abstract.
 - **`(Bachelor)` appears on thesis-supervision entries** even though the line below
   says "Supervisor of bachelor thesis" — the redundancy keeps every teaching entry
   parallel.
@@ -260,16 +267,25 @@ institutions may see both, so these differences are deliberate and must be prese
 | Header | name + affiliation | name + revision month |
 | Education | 3-column | 2-column `date \| content` |
 | Research visit | folded into Education | its own section |
-| Abstracts | under every paper | none — JMP title only |
+| Abstracts | under every paper | under every paper (from 08/2026) |
 | Talks section | `Presentations` | `Conferences, Workshops, and Invited Seminars` |
 | Service | `Service to the Profession` | `Refereeing` |
-| Foot | `Last updated: …` | nothing |
+| Foot | `Last updated: …` | `Last updated: …` (from 08/2026) |
 
-Do not close these gaps in the name of convention.
+Two of these gaps were deliberately closed in August 2026 at Moritz's request: abstracts
+under every paper, and a `Last updated` line at the foot. The remaining differences —
+typeface, heading style, contact placement, section naming — still stand and must be
+preserved. Evidence behind the change: of the 20 CVs in MIT's October 2025 job-market
+packet only one carried abstracts, so this is **not** the US norm; but the direct LMU/ifo
+comparator does carry them, at 8 pt italic across 4 pages, and 19 of those 20 MIT CVs
+carry a revision date. Revisit if the CV ever needs to be shorter.
 
 ## 11. Known open items
 
 - No **References** section. Standard on a job-market CV; add before applications.
+- **Abstracts push the CV to four pages**, with page 4 about a fifth full. If it ever needs
+  to come back to three, condensing each abstract to two or three sentences is the first
+  lever — before cutting entries.
 - **Award years are inferred**, not sourced: the two VEUK awards are dated to the
   degree completion years (2022, 2020) and the Deutschlandstipendium to the combined
   study period (2017–2022). Replace with the actual award years when known.
