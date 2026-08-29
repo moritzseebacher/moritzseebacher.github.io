@@ -7,9 +7,35 @@ Companion to [job-market-plan.md](job-market-plan.md). Written 25 August 2026.
 
 ## 1. EJME Candidate Directory profile (plan step 6)
 
+**STATUS 29 Aug 2026: the EJM applicant profile is created.** What remains here is the
+EJME Candidate Directory entry, which is a separate surface — complete it at the end of
+September once the CV is public, so the directory, CV and website agree on the same day.
+
 Needed for signals: up to 5 EJME signals, deadline end of November, transmitted to
 employers in early December. The profile has to exist before applications go out.
 Register at `econjobmarket.org`, then complete the Candidate Directory entry.
+
+**As entered on the EJM applicant profile, 29 Aug** — reuse these verbatim so the two
+profiles cannot drift:
+
+| Field | Value |
+|---|---|
+| Primary field | Labor; Demographic Economics |
+| Other fields | Applied microeconomics · Health; Education; Welfare |
+| Degree | PhD, LMU Munich, 2022–2027 |
+| Job type | No preference expressed |
+| Locations | European Union · Europe outside EU |
+| Visible to all recruiters | Yes |
+
+**200-character recruiter blurb** (EJM caps it at 200; every version written during a season
+stays visible to recruiters with its date, so do not iterate on this):
+
+> Labor and education economist using large-scale LinkedIn profile data to study how human
+> capital, social capital, and technological progress shape career trajectories and labor
+> market inequality.
+
+**Open on the EJM profile:** swap the email to `seebacher@ifo.de`; decide whether to check
+North America.
 
 | Field | Value |
 |---|---|

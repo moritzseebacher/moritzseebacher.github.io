@@ -1,7 +1,7 @@
 author:
   name: "Moritz Seebacher"
   avatar: "/Seebacher-Moritz_2023_7_ret_pass_format.jpg"
-  bio: "PhD student at the ifo Institute and LMU Munich."
+  bio: "PhD candidate at the ifo Institute and LMU Munich. Labor and education economics with large-scale resume data."
   location: "Munich, Germany"
   links:
     - label: "Email"
@@ -32,7 +32,7 @@ social:
 title: "Moritz Seebacher"
 google_site_verification: "i8JezATMaOIN3nw9b1N9otXpL0s1hUbCMuSmR_zfF7Y"
 masthead_title: "Home"
-description: "Moritz Seebacher — PhD student at ifo Institute and LMU Munich. Job market candidate 2026/27. Research in education and labor economics."
+description: "Moritz Seebacher — PhD candidate at ifo Institute and LMU Munich. Job market candidate 2026/27. Labor and education economics using large-scale resume data."
 og_image: "/Seebacher-Moritz_2023_7_ret_pass_format.jpg"
 url: "https://moritzseebacher.github.io"
 baseurl: ""
