@@ -18,3 +18,33 @@ Thumbs.db
 # Ruby / local Jekyll preview
 .bundle/
 vendor/
+
+# ---------------------------------------------------------------------------
+# PRIVATE — job market tooling and everything encoding personal preferences.
+#
+# This repository is PUBLIC (GitHub Pages). Job market material is local only:
+# it is kept on disk and in F:\Academic Website\job_market_2026, and is never
+# tracked here. See the "Private material" rule in CLAUDE.md for what counts.
+# See the "Private material" rule in CLAUDE.md before adding anything below.
+# ---------------------------------------------------------------------------
+.claude/commands/jm-scan.md
+.claude/job-market-drafts.md
+.claude/job-market-plan.md
+.claude/scripts/jm_scan.py
+.claude/scripts/jm_score.py
+.claude/scripts/jm_decide.py
+.claude/scripts/jm_deadlines.py
+
+# Defensive: anything job-market or preference shaped, wherever it lands
+.claude/**/jm_*
+.claude/**/jm-*
+**/job_market*/
+**/job-market*
+**/*preference*
+**/*application_tracker*
+**/*.bak_*
+**/backups/
+
+# Compiled Python — .pyc files embed the string constants of the scorer
+__pycache__/
+*.py[cod]

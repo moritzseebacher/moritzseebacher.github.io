@@ -6,6 +6,32 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Academic personal website for Moritz Seebacher (PhD student, ifo Institute / LMU Munich). Hosted on GitHub Pages at `https://moritzseebacher.github.io`. Repository: `github.com/moritzseebacher/moritzseebacher.github.io`. Research focus: education & labor economics, using LinkedIn data to study skills, social networks, and career trajectories.
 
+## Private material — STRICT
+
+**This repository is public.** It is served at `https://moritzseebacher.github.io`, and its
+full history is readable by anyone, including files deleted in a later commit.
+
+**Nothing describing Moritz's preferences may be committed here.** Not in a doc, not in a
+comment, not in a variable name, not in a test fixture, not in a `.pyc`. Specifically:
+
+- where he wants to live, and any ranking, weighting or tiering of places
+- personal and family circumstances, locations, or constraints of any kind
+- which institutions he is applying to, has applied to, or has ruled out
+- salary, offers, negotiation, referees' private remarks
+- anything elicited from him in a survey or choice exercise, and any model fitted to it
+
+**Where it goes instead:** `F:\Academic Website\job_market_2026\`, which is deliberately
+outside this repository. Preference material is **local only and known to Claude** — it is
+not tracked by git anywhere, not in this repo and not in another one.
+
+**The job market tooling is untracked on purpose.** `.claude/commands/jm-scan.md`,
+`.claude/scripts/jm_*.py`, `.claude/job-market-*.md` and `__pycache__/` live on disk so the
+`/jm-scan` command still works, but they are in `.gitignore` and must stay there. Do not
+`git add -f` them. Do not "restore" them on the grounds that they look like missing code.
+
+**Before committing anything, check.** If a change touches the job market workflow, confirm
+`git status` shows no job-market path staged. When in doubt, ask rather than commit.
+
 ## Tech Stack
 
 - **Jekyll** static site generator using the **Minimal Mistakes** remote theme (`mmistakes/minimal-mistakes`)
@@ -17,7 +43,7 @@ Academic personal website for Moritz Seebacher (PhD student, ifo Institute / LMU
 ## Build & Preview
 
 ```bash
-python .claude/scripts/site_check.py   # Pre-push validation (no Ruby needed)
+python .claude/scripts/site_check.py   # Pre-push validation (no Ruby needed; see fallback below)
 bundle exec jekyll serve               # Local dev server (http://localhost:4000)
 bundle exec jekyll build               # Build static site to _site/
 ```
@@ -27,6 +53,20 @@ breakages that actually occur when editing this site by hand: nav anchors that n
 resolve, links to files that do not exist, orphan PDFs left in the repo root, unbalanced
 `<details>`/`<div>` tags, blank lines that break kramdown's tight-list rule, and paper
 action rows whose PDF link is in the wrong position. Exit code 1 means do not push.
+
+### Finding a Python interpreter — ALWAYS check the fallback
+
+`python` is **not on `PATH` on every machine this repo is edited from**, and on the remote ifo
+server it is not on `PATH` at all. Do not conclude that Python is unavailable and skip
+`site_check.py` — the checker is the only pre-push validation there is.
+
+1. **Baseline (local computer):** `python`, `python3`, or `py` on `PATH`.
+2. **Backup (remote ifo server), always check this if step 1 fails:**
+   `Z:\PromotionProject\git_moritz\python_environment\jobtitles_env\python.exe`
+   — a project venv on the ifo network drive, verified working on 4 Sep 2026 (Python 3.10.19).
+   It runs `site_check.py` and `cv_audit.py` fine; they use only the standard library.
+
+Same order applies to `cv_audit.py` and any other script in `.claude/scripts/`.
 
 A `Gemfile` is committed for local preview via the `github-pages` gem, which pins the same
 dependency versions GitHub Pages uses server-side. **Ruby is not installed on the current
@@ -76,10 +116,16 @@ Each entry is a Markdown bullet:
 ### Abstracts
 
 Every entry at working-paper stage or beyond (publications, working papers) carries a
-collapsible abstract. Non-refereed policy papers do **not**. Work-in-progress entries carry one
-only once an abstract exists (the alumni-networks project does); they stay title-only otherwise,
-and never link to a PDF. The job market paper is the exception: its abstract is **expanded by
-default** (`<details ... open>`), but it collapses like the rest.
+collapsible abstract. Non-refereed policy papers do **not**. The job market paper is the
+exception in the other direction: its abstract is **expanded by default**
+(`<details ... open>`), but it collapses like the rest.
+
+**An abstract is the threshold for going public** (Moritz's rule, 4 Sep 2026). A
+work-in-progress project is listed only once an abstract exists for it — the alumni-networks
+project qualifies; a project that is merely named, outlined, or under grant review does not go
+on the site at all. Do not add title-only entries, even for projects named in the research
+statement: the statement is sent to a committee, the site is public, and they are deliberately
+not the same list. Work-in-progress entries never link to a PDF.
 
 Every abstract sits inside a `<div class="paper-actions">` row, whether or not the entry has a
 PDF. The `<details>` holds **only its `<summary>`**; the abstract text is a sibling
