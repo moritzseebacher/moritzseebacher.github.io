@@ -41,7 +41,7 @@ Use Glob or Bash `ls` to check. Then:
 
 **Job market paper:**
 - Confirm `Seebacher_Career_Effects_Online_Social_Networks.pdf` exists at the repo root and is the file `index.md` links to (the filename is deliberately stable across drafts).
-- Extract the PDF title page (`pdftotext -f 1 -l 1 <pdf> -`) and confirm the paper title and abstract match `index.md` verbatim. Report any drift — a stale abstract on the site is a blocker.
+- Extract the PDF title page (`pdftotext -f 1 -l 1 <pdf> -`) and confirm the paper title and abstract match `index.md` verbatim. Any drift is a **blocker: refuse to commit or push, fix the inconsistency first, then re-run this step**. A JMP update that reaches the site but not the CV (or vice versa) is the canonical case — both must be updated in the same pass.
 - `ls *.pdf` must show exactly two PDFs: the JMP and the CV. A dated JMP copy left in the root is a leftover — flag it.
 
 **CV filename:**
@@ -54,7 +54,8 @@ Use Glob or Bash `ls` to check. Then:
 **Anything stated in both the CV and `index.md` must agree.** These are two faces of
 the same record; drift between them is the most common way a factual error survives.
 
-Run the automated check first — it covers fields and the four paper titles:
+Run the automated check first — it covers fields, the four paper titles, and the JMP
+abstract (site ↔ CV, verbatim):
 
 ```bash
 cd "f:/Academic Website/moseeb98.github.io" && python .claude/scripts/cv_audit.py
@@ -70,7 +71,7 @@ normalise:
 | **Citations** | Same order: `Journal, volume(issue), locator, year` |
 | **Coauthor lists** | Same names, same order, serial comma and `and` on both sides |
 | **Position / affiliation** | Same wording for role and institute |
-| **Job Market Paper** | Same title; the CV carries title and year only, the abstract lives on the site |
+| **Job Market Paper** | Same title **and same abstract, verbatim** — the CV quotes the full abstract; `R37`/`R38` in `cv_audit.py` enforce both |
 
 Only content present in **both** places needs to match. The site may hold things the
 CV omits (expected graduation, job-market year, the JMP abstract) and vice versa

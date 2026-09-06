@@ -331,6 +331,25 @@ if os.path.exists(idx):
             fail('R37', '%s title is on the %s but not the %s: %r'
                  % (label, 'CV' if in_cv else 'site', 'site' if in_cv else 'CV', needle))
 
+    # R38 — the JMP abstract is quoted verbatim in both the CV and index.md.
+    # A new paper draft must land in both places in the same pass; a CV still
+    # carrying last month's abstract is exactly the drift this rule exists to
+    # catch (rule added 6 Sep 2026, after the 6 Sep draft update).
+    def squash(s):
+        s = s.replace('’', "'").replace('‘', "'")
+        s = s.replace('“', '"').replace('”', '"')
+        return re.sub(r'\s+', ' ', s).strip()
+
+    m = re.search(r'##\s*Job Market Paper.*?<span class="abstract-text">(.*?)</span>',
+                  md, re.S)
+    if not m:
+        fail('R38', 'index.md has no abstract-text span in the Job Market Paper section')
+    else:
+        site_abs = squash(m.group(1))
+        if not any(squash(l) == site_abs for l in lines):
+            fail('R38', 'JMP abstract on the site is not in the CV verbatim — '
+                 'update the CV docx (and re-export the PDF) or fix index.md')
+
 # ------------------------------------------------------------------- report
 print('Sections:   %d' % len(heads))
 print('Tables:     %d   Rows: %d' % (len(tables), sum(len(t.findall(W + 'tr')) for t in tables)))

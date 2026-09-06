@@ -181,11 +181,13 @@ CV PDF, job market paper PDF, and profile photo are served from the repo root (n
 
 Unlike the CV, the JMP PDF keeps a **stable filename** — `Seebacher_Career_Effects_Online_Social_Networks.pdf` — so that links shared on the job market never break. New drafts are dated in the paper itself, not in the filename.
 
-**When a new draft arrives:**
+**When a new draft arrives (every step, every time — updating the CV is part of this
+workflow, not a separate task):**
 1. Overwrite `Seebacher_Career_Effects_Online_Social_Networks.pdf` with the new PDF, keeping the filename unchanged. Do not add a dated copy to the repo root.
-2. Diff the new title page against `index.md` (`pdftotext -f 1 -l 1 <pdf> -`) — the title in the `## Job Market Paper` heading and the `**Abstract.**` paragraph must match the PDF verbatim.
-3. If the title changed, update it in `index.md` **and** in the CV (rule `R37` in `.claude/scripts/cv_audit.py` enforces this).
-4. Commit and push — the new PDF goes live at the same URL.
+2. Diff the new title page against `index.md` (`pdftotext -f 1 -l 1 <pdf> -`) — the title in the `## Job Market Paper` heading and the `abstract-text` span must match the PDF verbatim. When the abstract changed, take the new text from the paper's `main.tex`, not from pdftotext, to avoid line-break artifacts.
+3. Update the CV **in the same pass**: carry any title or abstract change into the CV `.docx`, re-export the PDF under a new dated filename, and relink `index.md` (see CV update workflow below). Rules `R37` (title) and `R38` (abstract, verbatim) in `.claude/scripts/cv_audit.py` enforce both.
+4. **Consistency gate — refuse to commit or push while anything is inconsistent.** Run `site_check.py` and `cv_audit.py`; any failure means fix it first and re-run. A stale abstract on the site or in the CV is a blocker, not a follow-up.
+5. Commit and push — the new PDF goes live at the same URL.
 
 ### CV update workflow
 
