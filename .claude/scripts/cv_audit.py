@@ -1,360 +1,269 @@
 # -*- coding: utf-8 -*-
 """
-CV format auditor — enforces the rules in .claude/commands/cv-check.md.
+CV consistency auditor — the pre-push gate for the published CV.
 
 Usage:
-    python .claude/scripts/cv_audit.py [path/to/CV.docx]
+    python .claude/scripts/cv_audit.py [path/to/CV.pdf]
 
-With no argument it audits the newest CV_Academic_Moritz_Seebacher_*.docx in the
-repo root. Exits 0 if every rule passes, 1 otherwise.
+With no argument it audits the CV PDF that index.md links. Exits 0 if every
+rule passes, 1 otherwise.
 
-Every check here corresponds to a numbered rule in the skill document. If you
-change a design rule, change it in BOTH places.
+WHAT CHANGED (10 September 2026). The CV used to be a Word document that lived
+untracked in the repo root and was exported to PDF by hand, and this script
+audited that .docx: fonts, table grids, paragraph spacing, forty-odd rules that
+existed because Word will silently let any of them drift. The CV is now built
+from LaTeX in the application package, which makes every one of those rules
+structurally impossible to break, so they are gone.
+
+What LaTeX cannot guarantee is the part that was always the real risk: that the
+CV and the website say the same thing, and that the copy served to the public
+carries no referee contact details. That is what remains here. The rule numbers
+of the surviving checks are unchanged (R31-R34, R37, R38) so that references to
+them elsewhere -- CLAUDE.md, commit messages -- still point at the same rule.
+
+The CV source is tex/cv.tex in the application package, which is deliberately
+outside this repository. This script therefore reads the built PDF, not the
+source: it checks the artefact that is actually served.
 """
-import sys, io, os, re, glob, zipfile, collections
-from xml.etree import ElementTree as ET
+import sys, io, os, re, glob, subprocess, datetime
 
 if hasattr(sys.stdout, 'buffer'):
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
-MC = '{http://schemas.openxmlformats.org/markup-compatibility/2006}'
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CONTACT_EMAIL = 'seebacher@ifo.de'
+STALE_DAYS = 60
 
-# ------------------------------------------------------------------ the spec
-FONT = 'Arial'
-SZ_BODY, SZ_SMALL, SZ_NAME, SZ_SUBTITLE = 22, 20, 56, 28
-ALLOWED_SIZES = {SZ_BODY, SZ_SMALL, SZ_NAME, SZ_SUBTITLE}
-TEXT_WIDTH, COL_DATE, COL_BODY = 10204, 2268, 7936
-HEAD_SIG = ('240', '80', '240', 'bottom', 'single', '4', '1')   # before/after/line + border
-BODY_SPACING = {'after': '80', 'line': '276', 'lineRule': 'auto'}
-ALLOWED_SPACING = {
-    'after=80,line=276,lineRule=auto',            # all body/table paragraphs
-    'after=80,before=240,line=240,lineRule=auto',  # section headings
-    'after=80,before=480,line=240,lineRule=auto',  # name
-    'after=160,line=240,lineRule=auto',            # subtitle date
-    'after=0,before=360,line=240,lineRule=auto',   # closing place/date line
-}
+# The public CV's sections, in order. "References" is absent by design: the
+# committee copy carries the four letter writers with their email addresses,
+# the website copy does not. See the \ifdefined\publicCV branch in tex/cv.tex.
 SECTIONS = [
-    'Contact Information', 'Fields', 'Current Position', 'Education',
-    'Research Visits', 'Job Market Paper', 'Publications', 'Working Papers',
-    'Work in Progress', 'Policy Publications',
-    'Conferences, Workshops, and Invited Seminars', 'Teaching Experience',
-    'Awards and Scholarships', 'Refereeing', 'Research Experience',
-    'Outreach and Volunteering', 'Languages', 'Technical Skills',
+    'Fields', 'Current Position', 'Education', 'Research Visits',
+    'Job Market Paper', 'Publications', 'Working Papers', 'Work in Progress',
+    'Policy Publications', 'Conferences, Workshops, and Invited Seminars',
+    'Teaching Experience', 'Awards and Scholarships', 'Refereeing',
+    'Research Experience', 'Outreach and Volunteering', 'Skills',
 ]
-LOWER_OK = {'a', 'an', 'the', 'and', 'or', 'in', 'of', 'for', 'to', 'on', 'at', 'by', 'vs.'}
 
 fails, warns = [], []
 
 
 def fail(rule, msg):
-    fails.append('[%s] %s' % (rule, msg))
+    fails.append('%s  %s' % (rule, msg))
 
 
 def warn(rule, msg):
-    warns.append('[%s] %s' % (rule, msg))
+    warns.append('%s  %s' % (rule, msg))
 
 
-# ------------------------------------------------------------------- loading
-def find_docx():
-    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    c = sorted(glob.glob(os.path.join(root, 'CV_Academic_Moritz_Seebacher_*.docx')),
-               key=os.path.getmtime)
-    if not c:
-        print('No CV .docx found in %s' % root)
-        sys.exit(1)
-    return c[-1]
+def squash(s):
+    s = s.replace('’', "'").replace('‘', "'")
+    s = s.replace('“', '"').replace('”', '"')
+    s = s.replace(' ', ' ')
+    return re.sub(r'\s+', ' ', s).strip()
 
 
-path = sys.argv[1] if len(sys.argv) > 1 else find_docx()
-root = ET.fromstring(zipfile.ZipFile(path).read('word/document.xml'))
-print('Auditing: %s\n' % path)
+# ------------------------------------------------------- 1. find the artefact
+idx_path = os.path.join(REPO, 'index.md')
+if not os.path.exists(idx_path):
+    print('index.md not found at %s' % idx_path)
+    sys.exit(1)
+md = io.open(idx_path, encoding='utf-8').read()
 
+linked = re.findall(r'\(/(CV_Academic_[^)]+\.pdf)\)', md)
+if not linked:
+    fail('R32', 'index.md does not link a CV PDF')
+elif len(set(linked)) > 1:
+    fail('R32', 'index.md links more than one CV PDF: %s' % sorted(set(linked)))
 
-def ptext(p):
-    buf = []
-    for n in p.iter():
-        t = n.tag[len(W):]
-        if t == 't':
-            buf.append(n.text or '')
-        elif t == 'tab':
-            buf.append('\t')
-        elif t == 'br':
-            buf.append('\n')
-    return ''.join(buf)
+if len(sys.argv) > 1:
+    pdf = os.path.abspath(sys.argv[1])
+elif linked:
+    pdf = os.path.join(REPO, linked[0])
+else:
+    sys.exit(1)
 
+if not os.path.exists(pdf):
+    fail('R32', 'index.md links %r but that file is not on disk' % os.path.basename(pdf))
+    print('FAILED (1)\n  x ' + fails[0])
+    sys.exit(1)
 
-def spacing_sig(sp):
-    return ','.join('%s=%s' % (k[len(W):], v) for k, v in sorted(sp.attrib.items()))
+stray = [os.path.basename(f) for f in glob.glob(os.path.join(REPO, 'CV_Academic_*.pdf'))
+         if os.path.basename(f) not in linked]
+if stray:
+    warn('R33', 'Unlinked CV PDF(s) still in the repo: %s' % stray)
 
+# The .docx is no longer the source of the CV. One left in the repo root means
+# somebody edited the old artefact and the two will drift.
+old_docx = [os.path.basename(f) for f in glob.glob(os.path.join(REPO, 'CV_Academic_*.docx'))]
+if old_docx:
+    warn('R33', 'Superseded CV .docx still in the repo root: %s. The CV is built '
+                'from tex/cv.tex in the application package now; delete these so '
+                'nobody edits the wrong file.' % old_docx)
 
-paras = list(root.iter(W + 'p'))
-tables = list(root.iter(W + 'tbl'))
+# ------------------------------------------------------------ 2. extract text
+# pdftotext is already a hard dependency of this workflow: build.ps1 refuses to
+# distribute the job market paper without it. Same rule here -- an unverifiable
+# CV does not get pushed.
+try:
+    out = subprocess.run(['pdftotext', '-layout', pdf, '-'],
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    text = out.stdout.decode('utf-8', 'replace')
+except (OSError, FileNotFoundError):
+    print('BLOCKED: pdftotext not found, so the published CV cannot be read and')
+    print('         none of the consistency rules can run. Install poppler/xpdf')
+    print('         (it is already required to publish the job market paper), or')
+    print('         check the CV by hand. Not verified means do not push.')
+    sys.exit(1)
 
-# ------------------------------------------------- 1. no floating shapes/junk
-n_shapes = (len(list(root.iter(MC + 'AlternateContent'))) +
-            len(list(root.iter(W + 'drawing'))) + len(list(root.iter(W + 'pict'))))
-if n_shapes:
-    fail('R1', '%d floating shape(s) present. Section rules must be paragraph '
-                'bottom borders, never anchored line shapes.' % n_shapes)
+if not text.strip():
+    fail('R31', 'No text extracted from %s -- is it a real PDF?' % os.path.basename(pdf))
+    print('FAILED (1)\n  x ' + fails[0])
+    sys.exit(1)
 
-# ---------------------------------------------------- 2. section headings
-heads = []
-for p in paras:
-    pPr = p.find(W + 'pPr')
-    if pPr is None or pPr.find(W + 'pBdr') is None:
-        continue
-    sp, bd = pPr.find(W + 'spacing'), pPr.find(W + 'pBdr')[0]
-    sig = (sp.get(W + 'before'), sp.get(W + 'after'), sp.get(W + 'line'),
-           bd.tag[len(W):], bd.get(W + 'val'), bd.get(W + 'sz'), bd.get(W + 'space'))
-    heads.append((ptext(p), sig, pPr))
+# Page footers have to come out before anything is compared. An abstract that
+# spans a page break otherwise has "2 of 3" extracted into the middle of it, and
+# the verbatim check below fails on a document that is in fact correct.
+FOOTER_RE = re.compile(r'^\s*\d+\s+of\s+\d+\s*$')
+lines = [l.rstrip() for l in text.splitlines() if l.strip() and not FOOTER_RE.match(l)]
+flat = squash('\n'.join(lines))
+pages = len([pg for pg in text.split('\f') if pg.strip()])
 
-names = [h[0] for h in heads]
-if names != SECTIONS:
-    fail('R2', 'Section list/order differs from spec.\n      expected: %s\n      found:    %s'
-         % (SECTIONS, names))
-for txt, sig, pPr in heads:
-    if sig != HEAD_SIG:
-        fail('R3', 'Heading %r format %s != spec %s' % (txt, sig, HEAD_SIG))
-    if pPr.find(W + 'keepNext') is None:
-        fail('R4', 'Heading %r missing <w:keepNext/> (may be orphaned at a page break)' % txt)
-    if txt != txt.strip():
-        fail('R5', 'Heading %r has leading/trailing whitespace' % txt)
-    for i, wd in enumerate(txt.split()):
-        if i and wd.lower() in LOWER_OK:
-            continue
-        if wd[:1].islower():
-            fail('R6', 'Heading %r is not Title Case (word %r)' % (txt, wd))
+# ------------------------------------------- 3. referee details stay off the web
+# The single most consequential rule in this file. The public CV is built with
+# \publicCV defined, which drops the References section; this verifies the
+# artefact rather than trusting the build.
+mails = sorted({m.lower() for m in re.findall(r'[\w.\-]+@[\w.\-]+\w', text)})
+leaked = [m for m in mails if m != CONTACT_EMAIL]
+if leaked:
+    fail('R34', 'The published CV carries %s. Only %s may appear: this copy is '
+                'public, and the letter writers\' addresses are not. Rebuild with '
+                '".\\build.ps1 web", which drops the References section.'
+         % (', '.join(leaked), CONTACT_EMAIL))
+if re.search(r'(?m)^\s*References\s*$', text):
+    fail('R34', 'The published CV has a References section. The website copy '
+                'must be the \\publicCV build, which omits it.')
 
-# --------------------------------------------------------- 3. table geometry
-for t in tables:
-    tblPr = t.find(W + 'tblPr')
-    w = tblPr.find(W + 'tblW').get(W + 'w')
-    if w != str(TEXT_WIDTH):
-        fail('R7', 'Table width %s != %d (page text width)' % (w, TEXT_WIDTH))
-    ind = tblPr.find(W + 'tblInd')
-    if ind is None or ind.get(W + 'w') != '0':
-        fail('R8', 'Table indent must be 0 so content aligns with the section rule')
-    cm = tblPr.find(W + 'tblCellMar')
-    if cm is None or cm.find(W + 'left').get(W + 'w') != '0':
-        fail('R9', 'Table left cell margin must be 0 (content flush with heading text)')
-    grid = tuple(g.get(W + 'w') for g in t.find(W + 'tblGrid'))
-    if grid not in ((str(TEXT_WIDTH),), (str(COL_DATE), str(COL_BODY))):
-        fail('R10', 'Table grid %s is neither full-width nor the %d/%d two-column layout'
-             % (list(grid), COL_DATE, COL_BODY))
-    for tr in t.findall(W + 'tr'):
-        trPr = tr.find(W + 'trPr')
-        if trPr is None or trPr.find(W + 'cantSplit') is None:
-            fail('R11', 'Row missing <w:cantSplit/> (entry could break across pages)')
+# --------------------------------------------------------- 4. sections present
+found = [l.strip() for l in lines if l.strip() in SECTIONS]
+seen = []
+for s in found:
+    if s not in seen:
+        seen.append(s)
+if seen != SECTIONS:
+    missing = [s for s in SECTIONS if s not in seen]
+    extra = [s for s in seen if s not in SECTIONS]
+    fail('R2', 'Section list/order differs from spec.\n      expected: %s\n'
+               '      found:    %s%s%s'
+         % (SECTIONS, seen,
+            '\n      missing:  %s' % missing if missing else '',
+            '\n      unexpected: %s' % extra if extra else ''))
 
-if list(root.iter(W + 'trHeight')):
-    fail('R12', 'Fixed row heights present. Row height must be content-driven, '
-                'otherwise one-line entries get padded and gaps go uneven.')
-
-# ------------------------------------------------------- 4. paragraph spacing
-sigs = collections.Counter(spacing_sig(s) for s in root.iter(W + 'spacing'))
-for s in sigs:
-    if s not in ALLOWED_SPACING:
-        fail('R13', 'Unapproved spacing spec %r (allowed: %s)' % (s, sorted(ALLOWED_SPACING)))
-for p in paras:
-    pPr = p.find(W + 'pPr')
-    if pPr is None:
-        fail('R14', 'Paragraph %r has no explicit formatting' % ptext(p)[:40])
-        continue
-    if pPr.find(W + 'spacing') is None:
-        fail('R14', 'Paragraph %r has no explicit spacing' % ptext(p)[:40])
-
-# ------------------------------------------------------------- 5. typography
-for r in root.iter(W + 'r'):
-    rPr = r.find(W + 'rPr')
-    txt = ''.join(t.text or '' for t in r.iter(W + 't'))
-    if not txt.strip():
-        continue
-    if rPr is None:
-        fail('R15', 'Run %r has no run properties (font/size not pinned)' % txt[:40])
-        continue
-    rf = rPr.find(W + 'rFonts')
-    if rf is None or rf.get(W + 'ascii') != FONT:
-        fail('R15', 'Run %r is not %s' % (txt[:40], FONT))
-    sz = rPr.find(W + 'sz')
-    if sz is None or int(sz.get(W + 'val')) not in ALLOWED_SIZES:
-        fail('R16', 'Run %r has size %s; allowed half-point sizes: %s'
-             % (txt[:40], sz.get(W + 'val') if sz is not None else None, sorted(ALLOWED_SIZES)))
-
-# ---------------------------------------------------------- 6. text hygiene
-lines = [ptext(p) for p in paras if ptext(p).strip()]
-joined = '\n'.join(lines)
-
-for l in lines:
-    if l != l.strip():
-        fail('R17', 'Leading/trailing whitespace: %r' % l)
-    if '  ' in l:
-        fail('R18', 'Double space: %r' % l)
-    if '\t' in l or '\n' in l:
-        fail('R19', 'Manual tab or line break inside a paragraph: %r' % l)
-    if '—' in l:
-        fail('R20', 'Em dash (use en dash for ranges): %r' % l)
-    if "'" in l:
-        fail('R21', "Straight apostrophe (use ’): %r" % l)
-    if ' ' in l:
-        warn('R22', 'Non-breaking space: %r' % l)
-    if re.search(r'\d\s*-\s*\d', l):
-        fail('R23', 'Hyphen between numbers (ranges take an en dash): %r' % l)
-    if re.search(r'\d{2}/\d{4}\s*-', l):
-        fail('R23', 'Hyphen in a date range: %r' % l)
-    if ';' in l:
-        fail('R35', 'Semicolon: %r. Lists separate with commas throughout.' % l)
-
-# italic is reserved for publication venues and status markers, never field labels
-for r in root.iter(W + 'r'):
-    rPr = r.find(W + 'rPr')
-    if rPr is None or rPr.find(W + 'i') is None:
-        continue
-    txt = ''.join(t.text or '' for t in r.iter(W + 't')).strip()
-    if txt.endswith(':'):
-        fail('R36', 'Italic field label %r. Italic marks journal/series names and '
-                    'status only; inline labels (Host:, Supervisor:, Invited '
-                    'seminars:) are roman.' % txt)
-
-# date ranges must be  MM/YYYY – MM/YYYY  or  MM/YYYY – present
-for l in lines:
-    if re.fullmatch(r'\d{2}/\d{4}.*', l) and '–' in l:
-        if not re.fullmatch(r'\d{2}/\d{4} – (\d{2}/\d{4}|present)', l):
-            fail('R24', 'Malformed date range %r (want "MM/YYYY – MM/YYYY" or '
-                        '"MM/YYYY – present")' % l)
-
-# location lines need a comma between place and country
-PLACES = ('Germany', 'Spain', 'U.S.')
-for l in lines:
-    if l.endswith(PLACES) and ',' not in l:
-        fail('R25', 'Location line missing comma: %r' % l)
-
-# ongoing roles say "present", never "today"/"now"
+# ------------------------------------------------------------ 5. text hygiene
+if '—' in text:
+    fail('R20', 'Em dash in the CV (ranges take an en dash)')
+if re.search(r'\bIfo\b', text):
+    fail('R27', '"Ifo" must be lowercase "ifo"')
+if 'Ludwig-Maximilians-University' in text:
+    fail('R28', 'Use "LMU Munich" (matches the Teaching Experience entries)')
 for bad in ('today', 'now', 'ongoing'):
-    if re.search(r'– %s\b' % bad, joined):
+    if re.search(r'–\s*%s\b' % bad, flat):
         fail('R26', 'Ongoing date uses %r; the CV says "present"' % bad)
 
-# institution name casing
-if re.search(r'\bIfo\b', joined):
-    fail('R27', '"Ifo" must be lowercase "ifo"')
-if 'Ludwig-Maximilians-University' in joined:
-    fail('R28', 'Use "LMU Munich" (matches the Teaching Experience entries)')
-
-# serial comma in coauthor lists
-for m in re.finditer(r'\(with ([^)]+)\)', joined):
+for m in re.finditer(r'\(with ([^)]+)\)', flat):
     a = m.group(1)
     if a.count(',') >= 1 and ' and ' not in a:
         fail('R29', 'Coauthor list %r missing serial "and"' % a)
     if ' and ' in a and a.count(',') >= 2 and not re.search(r',\s+and ', a):
         fail('R29', 'Coauthor list %r missing the serial (Oxford) comma' % a)
 
-# every teaching entry carries a level tag
-teach = False
+for l in lines:
+    m = re.match(r'^(\d{2}/\d{4}\s*\S?\s*\d{2}/\d{4}|\d{2}/\d{4}\s*\S?\s*present)', l.strip())
+    if re.match(r'^\d{2}/\d{4}', l.strip()) and not m:
+        fail('R24', 'Malformed date range %r (want "MM/YYYY - MM/YYYY" or '
+                    '"MM/YYYY - present", en dash)' % l.strip()[:40])
+    if m and '–' not in m.group(0):
+        fail('R23', 'Date range %r does not use an en dash' % m.group(0))
+
+# --------------------------------------- 6. the CV and the site say the same thing
+# R37 — anything stated in both places must agree. Separator style may differ
+# (the site uses "·", the CV uses ", "); the set of entries may not.
+def norm(s):
+    return {x.strip().rstrip('.').lower() for x in re.split(r'[·,]', s) if x.strip()}
+
+cv_fields = None
 for i, l in enumerate(lines):
-    if l == 'Teaching Experience':
-        teach = True
-        continue
-    if teach and l == 'Conferences and Workshops':
+    if l.strip() == 'Fields' and i + 1 < len(lines):
+        cv_fields = norm(lines[i + 1])
         break
-    if teach and (l.startswith('Supervisor') or l.startswith('Teaching Assistant')):
-        if '(Bachelor)' not in lines[i - 1] and '(Master)' not in lines[i - 1]:
-            fail('R30', 'Teaching entry %r has no (Bachelor)/(Master) level tag' % lines[i - 1])
+m = re.search(r'^\*\*Fields:\*\*\s*(.+)$', md, re.M)
+site_fields = norm(m.group(1)) if m else None
+if cv_fields is None:
+    fail('R37', 'No Fields section found in the CV')
+elif site_fields is None:
+    fail('R37', 'index.md has no "**Fields:**" line to check the CV against')
+elif cv_fields != site_fields:
+    fail('R37', 'Fields differ.\n      CV only:   %s\n      site only: %s'
+         % (sorted(cv_fields - site_fields) or '-',
+            sorted(site_fields - cv_fields) or '-'))
 
-# --------------------- 7. hyperlinks: contact email only, never paper titles
-rels = ET.fromstring(zipfile.ZipFile(path).read('word/_rels/document.xml.rels'))
-RNS = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
-targets = {r.get('Id'): r.get('Target') for r in rels
-           if r.get('Type', '').endswith('/hyperlink')}
-for h in root.iter(W + 'hyperlink'):
-    rid = h.get(RNS + 'id')
-    tgt = targets.get(rid, '')
-    if tgt != 'mailto:seebacher@ifo.de':
-        fail('R34', 'Hyperlink to %r. The CV links the contact email only — paper '
-                    'titles stay plain text so no entry looks more "clickable" than '
-                    'another.' % tgt)
+# Expected graduation is stated in both places and is the fact most likely to
+# go stale in one of them.
+m_cv = re.search(r'Expected graduation:\s*([A-Za-z]+ \d{4})', flat, re.I)
+m_site = re.search(r'Expected graduation:\s*([A-Za-z]+ \d{4})', md, re.I)
+if m_cv and m_site and m_cv.group(1).lower() != m_site.group(1).lower():
+    fail('R37', 'Expected graduation differs: CV says %r, site says %r'
+         % (m_cv.group(1), m_site.group(1)))
 
-# --------------------------------------------------- 8. PDF is in sync
-pdf = os.path.splitext(path)[0] + '.pdf'
-if not os.path.exists(pdf):
-    fail('R31', 'No exported PDF next to the .docx (%s)' % os.path.basename(pdf))
-elif os.path.getmtime(pdf) < os.path.getmtime(path):
-    fail('R31', 'PDF is older than the .docx — re-export before committing')
+# Titles that appear on both sides must match verbatim.
+for label, needle in (('JMP', 'Career Effects of Online Social Network Access at Labor Market Entry'),
+                      ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
+                      ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
+                      ('work in progress', 'Alumni Networks, First Job Placements'),
+                      ('policy paper', 'Wie Fahrräder die Bildungschancen')):
+    in_cv = squash(needle) in flat
+    in_site = needle in md
+    if in_cv != in_site:
+        fail('R37', '%s title is on the %s but not the %s: %r'
+             % (label, 'CV' if in_cv else 'site', 'site' if in_cv else 'CV', needle))
 
-# --------------------------------------------------- 9. website link matches
-repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-idx = os.path.join(repo, 'index.md')
-if os.path.exists(idx):
-    md = open(idx, encoding='utf-8').read()
-    linked = re.findall(r'\(/(CV_Academic_[^)]+\.pdf)\)', md)
-    if not linked:
-        fail('R32', 'index.md does not link a CV PDF')
-    for name in linked:
-        if not os.path.exists(os.path.join(repo, name)):
-            fail('R32', 'index.md links %r but that file is not on disk' % name)
-        elif name != os.path.basename(pdf):
-            fail('R32', 'index.md links %r but the current PDF is %r'
-                 % (name, os.path.basename(pdf)))
-    stray = [os.path.basename(f) for f in glob.glob(os.path.join(repo, 'CV_Academic_*.pdf'))
-             if os.path.basename(f) not in linked]
-    if stray:
-        warn('R33', 'Unlinked CV PDF(s) still in the repo: %s' % stray)
+# R38 — every abstract the site shows is quoted verbatim in the CV too. A new
+# paper draft must land in both places in the same pass; a CV still carrying
+# last month's abstract is exactly the drift this rule exists to catch. Widened
+# 10 Sep 2026 from the job market paper alone to all four abstracts, once the
+# work-in-progress abstract came back into the CV.
+sections = re.split(r'(?m)^##\s+', md)[1:]
+checked = 0
+for sec in sections:
+    heading = sec.splitlines()[0].split('{')[0].strip()
+    for span in re.findall(r'<span class="abstract-text">(.*?)</span>', sec, re.S):
+        checked += 1
+        if squash(span) not in flat:
+            fail('R38', 'The %s abstract on the site is not in the CV verbatim — '
+                        'rebuild the CV from tex/cv.tex (".\\build.ps1 web") or fix '
+                        'index.md' % heading)
+if not checked:
+    fail('R38', 'index.md has no abstract-text spans at all — has the page changed shape?')
 
-    # R37 — anything stated in both places must agree. Separator style may differ
-    # (the site uses "·", the CV uses ", "); the set of entries may not.
-    def norm(s):
-        return {x.strip().rstrip('.').lower() for x in re.split(r'[·,]', s) if x.strip()}
-
-    cv_fields = None
-    for i, l in enumerate(lines):
-        if l == 'Fields' and i + 1 < len(lines):
-            cv_fields = norm(lines[i + 1])
-            break
-    m = re.search(r'^\*\*Fields:\*\*\s*(.+)$', md, re.M)
-    site_fields = norm(m.group(1)) if m else None
-    if cv_fields is None:
-        fail('R37', 'No Fields section found in the CV')
-    elif site_fields is None:
-        fail('R37', 'index.md has no "**Fields:**" line to check the CV against')
-    elif cv_fields != site_fields:
-        fail('R37', 'Fields differ.\n      CV only:   %s\n      site only: %s'
-             % (sorted(cv_fields - site_fields) or '-',
-                sorted(site_fields - cv_fields) or '-'))
-
-    # titles that appear on both sides must match verbatim
-    for label, needle in (('JMP', 'Career Effects of Online Social Network Access at Labor Market Entry'),
-                          ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
-                          ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
-                          ('policy paper', 'Wie Fahrräder die Bildungschancen')):
-        in_cv = any(needle in l for l in lines)
-        in_site = needle in md
-        if in_cv != in_site:
-            fail('R37', '%s title is on the %s but not the %s: %r'
-                 % (label, 'CV' if in_cv else 'site', 'site' if in_cv else 'CV', needle))
-
-    # R38 — the JMP abstract is quoted verbatim in both the CV and index.md.
-    # A new paper draft must land in both places in the same pass; a CV still
-    # carrying last month's abstract is exactly the drift this rule exists to
-    # catch (rule added 6 Sep 2026, after the 6 Sep draft update).
-    def squash(s):
-        s = s.replace('’', "'").replace('‘', "'")
-        s = s.replace('“', '"').replace('”', '"')
-        return re.sub(r'\s+', ' ', s).strip()
-
-    m = re.search(r'##\s*Job Market Paper.*?<span class="abstract-text">(.*?)</span>',
-                  md, re.S)
-    if not m:
-        fail('R38', 'index.md has no abstract-text span in the Job Market Paper section')
-    else:
-        site_abs = squash(m.group(1))
-        if not any(squash(l) == site_abs for l in lines):
-            fail('R38', 'JMP abstract on the site is not in the CV verbatim — '
-                 'update the CV docx (and re-export the PDF) or fix index.md')
+# ------------------------------------------------------------- 7. freshness
+m = re.search(r'Last updated:\s*([A-Za-z]+ \d{1,2}, \d{4})', flat)
+if not m:
+    warn('R39', 'No "Last updated" line found in the CV')
+else:
+    try:
+        d = datetime.datetime.strptime(m.group(1), '%B %d, %Y').date()
+        age = (datetime.date.today() - d).days
+        if age > STALE_DAYS:
+            warn('R39', 'CV was last updated %s (%d days ago)' % (m.group(1), age))
+    except ValueError:
+        warn('R39', 'Unparseable "Last updated" date: %r' % m.group(1))
 
 # ------------------------------------------------------------------- report
-print('Sections:   %d' % len(heads))
-print('Tables:     %d   Rows: %d' % (len(tables), sum(len(t.findall(W + 'tr')) for t in tables)))
-print('Paragraphs: %d' % len(paras))
-print('Spacing specs in use: %d' % len(sigs))
+print('CV:         %s' % os.path.basename(pdf))
+print('Pages:      %d' % pages)
+print('Sections:   %d' % len(seen))
+print('Abstracts:  %d checked against index.md' % checked)
+print('Emails:     %s' % (', '.join(mails) or 'none'))
 print()
 if warns:
     print('WARNINGS (%d)' % len(warns))
@@ -366,4 +275,4 @@ if fails:
     for f in fails:
         print('  x ' + f)
     sys.exit(1)
-print('All format rules pass.')
+print('All CV consistency rules pass.')

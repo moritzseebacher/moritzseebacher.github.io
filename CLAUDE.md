@@ -65,6 +65,8 @@ server it is not on `PATH` at all. Do not conclude that Python is unavailable an
    `Z:\PromotionProject\git_moritz\python_environment\jobtitles_env\python.exe`
    — a project venv on the ifo network drive, verified working on 4 Sep 2026 (Python 3.10.19).
    It runs `site_check.py` and `cv_audit.py` fine; they use only the standard library.
+   `cv_audit.py` additionally shells out to `pdftotext`, which must be on `PATH`; without it
+   the audit blocks rather than passing unverified.
 
 Same order applies to `cv_audit.py` and any other script in `.claude/scripts/`.
 
@@ -86,7 +88,7 @@ moseeb98.github.io/
 ├── Seebacher-Moritz_2023_7_ret_pass_format.jpg    # Profile photo (served from root)
 ├── Seebacher_Career_Effects_Online_Social_Networks.pdf  # Job market paper (stable filename)
 ├── Multidimensional_Skills_LinkedIn_IZA_DP17896.pdf     # Working paper PDF (stable filename)
-└── CV_Academic_Moritz_Seebacher_07_26_English.pdf  # CV (served from root)
+└── CV_Academic_Moritz_Seebacher_MM_YY_English.pdf  # CV (built from LaTeX, served from root)
 ```
 
 ## Architecture
@@ -185,20 +187,41 @@ Unlike the CV, the JMP PDF keeps a **stable filename** — `Seebacher_Career_Eff
 workflow, not a separate task):**
 1. Overwrite `Seebacher_Career_Effects_Online_Social_Networks.pdf` with the new PDF, keeping the filename unchanged. Do not add a dated copy to the repo root.
 2. Diff the new title page against `index.md` (`pdftotext -f 1 -l 1 <pdf> -`) — the title in the `## Job Market Paper` heading and the `abstract-text` span must match the PDF verbatim. When the abstract changed, take the new text from the paper's `main.tex`, not from pdftotext, to avoid line-break artifacts.
-3. Update the CV **in the same pass**: carry any title or abstract change into the CV `.docx`, re-export the PDF under a new dated filename, and relink `index.md` (see CV update workflow below). Rules `R37` (title) and `R38` (abstract, verbatim) in `.claude/scripts/cv_audit.py` enforce both.
+3. Update the CV **in the same pass**: carry any title or abstract change into `tex/cv.tex` in the application package, then rebuild and re-sync the website copy with `.\build.ps1 web` (see CV update workflow below). Rules `R37` (title) and `R38` (abstract, verbatim) in `.claude/scripts/cv_audit.py` enforce both.
 4. **Consistency gate — refuse to commit or push while anything is inconsistent.** Run `site_check.py` and `cv_audit.py`; any failure means fix it first and re-run. A stale abstract on the site or in the CV is a blocker, not a follow-up.
 5. Commit and push — the new PDF goes live at the same URL.
 
 ### CV update workflow
 
-The CV is maintained in a Word document (`.docx`) that lives in the repo root locally but is excluded from git via `.gitignore`. Only the exported PDF is committed and served.
+**The CV is built from LaTeX, not Word** (changed 10 September 2026). The source is
+`tex/cv.tex` in the application package, which lives outside this repository with the rest of
+the job market material. One source produces two PDFs:
+
+| Build | Output | Carries the referees? |
+|---|---|---|
+| `.\build.ps1 core` | `pdf\Seebacher_CV.pdf` | **Yes** — sent with applications and to the letter writers |
+| `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **No** — the `\publicCV` build drops the References section |
+
+Everything above the References section is identical in both by construction, so the committee
+copy and the public copy cannot drift.
+
+**Never hand-edit the PDF in this repo root.** It is overwritten by the next `build.ps1 web`.
+Edit `tex/cv.tex` and rebuild.
 
 **When updating the CV:**
-1. Edit `CV_Academic_Moritz_Seebacher_MM_YY_English.docx` locally.
-2. Export/save as PDF with the updated filename (e.g. `CV_Academic_Moritz_Seebacher_03_26_English.pdf`).
-3. Update the CV link in `index.md` to point to the new PDF filename.
-4. Delete the old PDF from the repo (or it will accumulate).
-5. Commit and push — the new PDF goes live automatically.
+1. Edit `tex/cv.tex` in the application package.
+2. Run `.\build.ps1 core` (the copy that goes to committees and letter writers) and
+   `.\build.ps1 web` (the public copy). The `web` command copies the public PDF here under a
+   filename dated to the current month, deletes the superseded one, and relinks `index.md` if
+   the month rolled over.
+3. Run `site_check.py` and `cv_audit.py`. `cv_audit.py` is the gate that matters: it reads the
+   published PDF and fails if it carries any email address other than `seebacher@ifo.de`, if it
+   still has a References section, if the Fields line or a paper title disagrees with
+   `index.md`, or if the job market paper abstract is not verbatim in both.
+4. Commit and push — the new PDF goes live automatically.
+
+The Word documents in the repo root are superseded and are kept only as history. They are
+git-ignored and no longer feed anything; `cv_audit.py` warns while they are still there.
 
 ## Responsive Layout (CSS)
 

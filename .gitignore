@@ -1,4 +1,5 @@
-# CV source document — keep local only, do not commit
+# Superseded CV source. The CV is built from LaTeX in the application package
+# since 10 Sep 2026; these Word files are local history only, never committed.
 *.docx
 
 # Jekyll build output

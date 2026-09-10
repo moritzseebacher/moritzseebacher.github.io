@@ -42,10 +42,11 @@ Use Glob or Bash `ls` to check. Then:
 **Job market paper:**
 - Confirm `Seebacher_Career_Effects_Online_Social_Networks.pdf` exists at the repo root and is the file `index.md` links to (the filename is deliberately stable across drafts).
 - Extract the PDF title page (`pdftotext -f 1 -l 1 <pdf> -`) and confirm the paper title and abstract match `index.md` verbatim. Any drift is a **blocker: refuse to commit or push, fix the inconsistency first, then re-run this step**. A JMP update that reaches the site but not the CV (or vice versa) is the canonical case — both must be updated in the same pass.
-- `ls *.pdf` must show exactly two PDFs: the JMP and the CV. A dated JMP copy left in the root is a leftover — flag it.
+- Every PDF in the repo root must be linked from `index.md`. A dated JMP copy left in the root is a leftover — flag it. `site_check.py` checks this.
 
-**CV filename:**
-- Re-confirm the PDF filename in `index.md` matches the actual file on disk (carry over result from Step 1).
+**CV:**
+- Run `python .claude/scripts/cv_audit.py`. It must exit 0. It reads the published CV PDF and fails if the CV carries any email address other than `seebacher@ifo.de`, if it still has a References section, if the Fields line, expected graduation or a paper title disagrees with `index.md`, or if the job market paper abstract is not verbatim in both.
+- The CV is built from `tex/cv.tex` in the application package via `.\build.ps1 web`, never edited here. If the audit fails, fix the source and rebuild — do not edit the PDF.
 
 ---
 
