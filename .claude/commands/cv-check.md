@@ -79,7 +79,7 @@ Three macros, defined in `cv.tex`:
 | `\cventry{date}{body}` | a dated entry — narrow date column, wide body column |
 | `\cvplain{body}` | an undated entry that still aligns with the dated ones |
 | `\cvpaper{title}{outlet}{abstract}` | a paper; outlet and abstract are both optional |
-| `\cvlink{url}{label}` | blue `[label]` link closing an outlet line: every paper with a public version links to the same target as its title link on the website, the JMP to its stable latest-version PDF with the wording of its title page (Moritz, 16 Sep 2026, a recruiter's tip) |
+| `\cvlink{url}{label}` | blue `[label]` link closing an outlet line: every paper links to the **ungated PDF hosted on the website** (the same file as the site's PDF button), never a publisher page, so a recruiter lands on the paper itself; the JMP uses its stable latest-version link with the wording of its title page; the policy article links the open ifo page, which has no hosted PDF (Moritz, 16 Sep 2026, a recruiter's tip) |
 
 **Dated entry:** the body's first line is the role or title, **in bold in every section**;
 subsequent lines are detail and take **no date of their own**. A date beside a detail line
