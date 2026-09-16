@@ -16,8 +16,11 @@ from LaTeX in the application package, which makes every one of those rules
 structurally impossible to break, so they are gone.
 
 What LaTeX cannot guarantee is the part that was always the real risk: that the
-CV and the website say the same thing, and that the copy served to the public
-carries no referee contact details. That is what remains here. The rule numbers
+CV and the website say the same thing. That is what remains here. Until 16
+September 2026 R34 also enforced that the public copy carried no referee
+details; since all four letter writers agreed to be listed publicly, R34 now
+checks the opposite: the References section is present and agrees with the
+References section on the site. The rule numbers
 of the surviving checks are unchanged (R31-R34, R37, R38) so that references to
 them elsewhere -- CLAUDE.md, commit messages -- still point at the same rule.
 
@@ -34,15 +37,14 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 CONTACT_EMAIL = 'seebacher@ifo.de'
 STALE_DAYS = 60
 
-# The public CV's sections, in order. "References" is absent by design: the
-# committee copy carries the four letter writers with their email addresses,
-# the website copy does not. See the \ifdefined\publicCV branch in tex/cv.tex.
+# The CV's sections, in order. "References" closes the CV on the public copy
+# too (Moritz, 16 Sep 2026): the website CV is the committee CV.
 SECTIONS = [
     'Fields', 'Current Position', 'Education', 'Research Visits',
     'Job Market Paper', 'Publications', 'Working Papers', 'Work in Progress',
     'Policy Publications', 'Conferences, Workshops, and Invited Seminars',
     'Teaching Experience', 'Awards and Scholarships', 'Refereeing',
-    'Research Experience', 'Outreach and Volunteering', 'Skills',
+    'Research Experience', 'Outreach and Volunteering', 'Skills', 'References',
 ]
 
 fails, warns = [], []
@@ -129,20 +131,25 @@ lines = [l.rstrip() for l in text.splitlines() if l.strip() and not FOOTER_RE.ma
 flat = squash('\n'.join(lines))
 pages = len([pg for pg in text.split('\f') if pg.strip()])
 
-# ------------------------------------------- 3. referee details stay off the web
-# The single most consequential rule in this file. The public CV is built with
-# \publicCV defined, which drops the References section; this verifies the
-# artefact rather than trusting the build.
+# ------------------------------------- 3. the referees are on the CV and the site
+# Since 16 Sep 2026 the published CV carries the References section, and the
+# site has a References section of its own. Every referee address the site
+# shows must be in the CV and vice versa; a CV without the section is a stale
+# or truncated build.
 mails = sorted({m.lower() for m in re.findall(r'[\w.\-]+@[\w.\-]+\w', text)})
-leaked = [m for m in mails if m != CONTACT_EMAIL]
-if leaked:
-    fail('R34', 'The published CV carries %s. Only %s may appear: this copy is '
-                'public, and the letter writers\' addresses are not. Rebuild with '
-                '".\\build.ps1 web", which drops the References section.'
-         % (', '.join(leaked), CONTACT_EMAIL))
-if re.search(r'(?m)^\s*References\s*$', text):
-    fail('R34', 'The published CV has a References section. The website copy '
-                'must be the \\publicCV build, which omits it.')
+cv_refs = {m for m in mails if m != CONTACT_EMAIL}
+site_refs = set()
+m_ref = re.search(r'(?ms)^##\s+References.*?(?=^##\s|\Z)', md)
+if not m_ref:
+    fail('R34', 'index.md has no "## References" section')
+else:
+    site_refs = {m.lower() for m in re.findall(r'mailto:([\w.\-]+@[\w.\-]+\w)', m_ref.group(0))}
+if not re.search(r'(?m)^\s*References\s*$', text):
+    fail('R34', 'The published CV has no References section; rebuild with '
+                '".\\build.ps1 web" from the current tex/cv.tex.')
+if cv_refs != site_refs:
+    fail('R34', 'Referee addresses differ.\n      CV only:   %s\n      site only: %s'
+         % (sorted(cv_refs - site_refs) or '-', sorted(site_refs - cv_refs) or '-'))
 
 # --------------------------------------------------------- 4. sections present
 found = [l.strip() for l in lines if l.strip() in SECTIONS]
@@ -220,12 +227,20 @@ for label, needle in (('JMP', 'Career Effects of Online Social Network Access at
                       ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
                       ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
                       ('work in progress', 'Alumni Networks, First Job Placements'),
+                      ('work in progress', 'Who Gets Promoted? Evidence from LinkedIn Profiles'),
                       ('policy paper', 'Wie Fahrräder die Bildungschancen')):
     in_cv = squash(needle) in flat
     in_site = needle in md
     if in_cv != in_site:
         fail('R37', '%s title is on the %s but not the %s: %r'
              % (label, 'CV' if in_cv else 'site', 'site' if in_cv else 'CV', needle))
+
+# The "Draft available upon request" tag (alumni project, 16 Sep 2026) is a
+# status both places state; it is added or dropped in the same pass.
+TAG = 'Draft available upon request'
+if (TAG in flat) != (TAG in md):
+    fail('R37', '"%s" is on the %s but not the %s' % (TAG, 'CV' if TAG in flat else 'site',
+                                                    'site' if TAG in flat else 'CV'))
 
 # R38 — every abstract the site shows is quoted verbatim in the CV too. A new
 # paper draft must land in both places in the same pass; a CV still carrying

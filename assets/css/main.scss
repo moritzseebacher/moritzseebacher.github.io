@@ -261,6 +261,17 @@
   min-width: 0;
 }
 
+/* Status note beside the toggle for entries without a PDF, e.g. "Draft
+   available upon request" on work in progress. Same size as the PDF button,
+   but plain text: it is a statement, not something to click. */
+.paper-actions > .paper-note {
+  flex: 0 0 auto;
+  font-size: 0.75em;
+  font-style: italic;
+  color: mix($text-color, $background-color, 60%);
+  white-space: nowrap;
+}
+
 .paper-actions > .paper-pdf {
   font-size: 0.75em;
   font-weight: bold;

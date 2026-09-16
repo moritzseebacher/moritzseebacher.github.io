@@ -40,7 +40,8 @@ I am Moritz Seebacher, a PhD candidate at the [ifo Center for the Economics of E
 ## Work in Progress {#work-in-progress}
 
 - Alumni Networks, First Job Placements, and the College Selectivity Premium (with Cäcilia vom Baur, Katia Werkmeister, and Ludger Woessmann)
-  <div class="paper-actions"><details class="abstract"><summary>Abstract</summary></details><span class="abstract-text">How important are college alumni networks for graduates’ first job placement and earnings differences across colleges? Using detailed resume data from the universe of public LinkedIn profiles, we show that graduates of selective four-year U.S. colleges disproportionately start their careers at alumni-connected firms, more than location and sector preferences predict. Alumni networks also differ sharply in quality: alumni from elite colleges are 70 percent more likely to work at high-paying firms and 26 percent more likely to hold management positions than those from the least selective colleges. To examine the causal link between alumni and graduates’ first job placements, we exploit plausibly exogenous variation in the timing of alumni firm-to-firm moves around graduates’ job search. One additional alumnus at a firm before graduates complete their job search raises the probability that a graduate starts there by 13% relative to the baseline match probability. The effect is stronger for alumni in management and from the same major, as well as at less selective colleges. Yet, alumni draw more and less selective college graduates into different firms, affecting the college selectivity wage premium: Incorporating the causal estimates into a decomposition framework, we find that alumni networks account for at least 4% of the entry-level wage gap between elite and less-selective colleges. The results highlight that alumni networks play an important role in first job placement and serve as one mechanism behind the widely documented early-career earnings differences across colleges.</span></div>
+  <div class="paper-actions"><details class="abstract"><summary>Abstract</summary></details><span class="paper-note">Draft available upon request</span><span class="abstract-text">How important are college alumni networks for graduates’ first job placement and earnings differences across colleges? Using detailed resume data from the universe of public LinkedIn profiles, we show that graduates of selective four-year U.S. colleges disproportionately start their careers at alumni-connected firms, more than location and sector preferences predict. Alumni networks also differ sharply in quality: alumni from elite colleges are 70 percent more likely to work at high-paying firms and 26 percent more likely to hold management positions than those from the least selective colleges. To examine the causal link between alumni and graduates’ first job placements, we exploit plausibly exogenous variation in the timing of alumni firm-to-firm moves around graduates’ job search. One additional alumnus at a firm before graduates complete their job search raises the probability that a graduate starts there by 13% relative to the baseline match probability. The effect is stronger for alumni in management and from the same major, as well as at less selective colleges. Yet, alumni draw more and less selective college graduates into different firms, affecting the college selectivity wage premium: Incorporating the causal estimates into a decomposition framework, we find that alumni networks account for at least 4% of the entry-level wage gap between elite and less-selective colleges. The results highlight that alumni networks play an important role in first job placement and serve as one mechanism behind the widely documented early-career earnings differences across colleges.</span></div>
+- Who Gets Promoted? Evidence from LinkedIn Profiles (with David Dorn and Ludger Woessmann)
 
 ---
 
@@ -54,5 +55,18 @@ I am Moritz Seebacher, a PhD candidate at the [ifo Center for the Economics of E
 ## CV {#cv}
 
 You can find my CV **[here](/CV_Academic_Moritz_Seebacher_09_26_English.pdf)**.
+
+---
+
+## References {#references}
+
+- **Prof. Ludger Woessmann**  
+  <small>University of Munich (LMU) and ifo Institute · Doctoral supervisor · [woessmann@ifo.de](mailto:woessmann@ifo.de)</small>
+- **Prof. David Dorn**  
+  <small>University of Zurich · Co-author · [david.dorn@econ.uzh.ch](mailto:david.dorn@econ.uzh.ch)</small>
+- **Prof. Joseph Altonji**  
+  <small>Yale University · Host, research visit 2025 · [joseph.altonji@yale.edu](mailto:joseph.altonji@yale.edu)</small>
+- **Prof. Ingrid Haegele**  
+  <small>University of Munich (LMU) · [ingrid.haegele@econ.lmu.de](mailto:ingrid.haegele@econ.lmu.de)</small>
 
 ---

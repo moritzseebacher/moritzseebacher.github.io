@@ -11,6 +11,8 @@
       url: "/#policy-papers-non-refereed"
     - title: "CV"
       url: "/#cv"
+    - title: "References"
+      url: "/#references"
 
   sections:
     - title: "Sections"
@@ -27,3 +29,5 @@
           url: "/#policy-papers-non-refereed"
         - title: "CV"
           url: "/#cv"
+        - title: "References"
+          url: "/#references"

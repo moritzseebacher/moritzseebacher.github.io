@@ -122,12 +122,21 @@ collapsible abstract. Non-refereed policy papers do **not**. The job market pape
 exception in the other direction: its abstract is **expanded by default**
 (`<details ... open>`), but it collapses like the rest.
 
-**An abstract is the threshold for going public** (Moritz's rule, 4 Sep 2026). A
-work-in-progress project is listed only once an abstract exists for it — the alumni-networks
-project qualifies; a project that is merely named, outlined, or under grant review does not go
-on the site at all. Do not add title-only entries, even for projects named in the research
-statement: the statement is sent to a committee, the site is public, and they are deliberately
-not the same list. Work-in-progress entries never link to a PDF.
+**What goes public, and at which stage** (Moritz, revised 16 Sep 2026). A work-in-progress
+project is listed once Moritz has decided it will become a paper and wants the collaboration
+visible — as a **title-only** entry with coauthors and no action row (the promotions project
+with Dorn and Woessmann is the example). An abstract is added once the coauthors have agreed
+on one (the alumni project). Projects still at the idea, outline, or grant-review stage
+(misreporting, AI and labor) stay off the site even though the research statement names them:
+the statement goes to a committee, the site is public, and they are deliberately not the same
+list. Work-in-progress entries never link to a PDF. Whatever is listed here is listed in the
+CV in the same words, and `cv_audit.py` (rule `R37`) checks every title on both sides.
+
+**Status notes.** An entry that has a draft but no public PDF carries
+`<span class="paper-note">Draft available upon request</span>` directly after the abstract
+toggle (alumni project, 16 Sep 2026). The same words go into the CV's outlet slot, and rule
+`R37` fails if one side has the tag and the other does not. Drop the tag the day the PDF goes
+up.
 
 Every abstract sits inside a `<div class="paper-actions">` row, whether or not the entry has a
 PDF. The `<details>` holds **only its `<summary>`**; the abstract text is a sibling
@@ -200,10 +209,13 @@ the job market material. One source produces two PDFs:
 | Build | Output | Carries the referees? |
 |---|---|---|
 | `.\build.ps1 core` | `pdf\Seebacher_CV.pdf` | **Yes** — sent with applications and to the letter writers |
-| `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **No** — the `\publicCV` build drops the References section |
+| `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **Yes** — the same PDF under the dated name |
 
-Everything above the References section is identical in both by construction, so the committee
-copy and the public copy cannot drift.
+**Since 16 September 2026 the two copies are the same document.** All four letter writers
+agreed to be listed publicly, so the References section (names, affiliations, email addresses)
+is on the website CV and, as a `## References` section, on `index.md` itself. Until then the
+website build defined `\publicCV`, which dropped the block; that switch is gone. `build.ps1 web`
+refuses to copy a CV that does not carry all four referees.
 
 **Never hand-edit the PDF in this repo root.** It is overwritten by the next `build.ps1 web`.
 Edit `tex/cv.tex` and rebuild.
@@ -215,9 +227,9 @@ Edit `tex/cv.tex` and rebuild.
    filename dated to the current month, deletes the superseded one, and relinks `index.md` if
    the month rolled over.
 3. Run `site_check.py` and `cv_audit.py`. `cv_audit.py` is the gate that matters: it reads the
-   published PDF and fails if it carries any email address other than `seebacher@ifo.de`, if it
-   still has a References section, if the Fields line or a paper title disagrees with
-   `index.md`, or if the job market paper abstract is not verbatim in both.
+   published PDF and fails if its References section is missing or lists different referee
+   addresses than the `## References` section of `index.md`, if the Fields line, a paper title
+   or the draft-status tag disagrees with `index.md`, or if an abstract is not verbatim in both.
 4. Commit and push — the new PDF goes live automatically.
 
 The Word documents in the repo root are superseded and are kept only as history. They are

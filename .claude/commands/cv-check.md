@@ -25,11 +25,13 @@ says, and whether it still agrees with the website.
 | Build | Output | References section |
 |---|---|---|
 | `.\build.ps1 core` | `pdf\Seebacher_CV.pdf` | **Yes** — the four letter writers with email addresses |
-| `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **No** |
+| `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **Yes** — the same PDF |
 
-The website build defines `\publicCV`, which drops the References section. Everything above
-it is identical in both by construction, so the committee copy and the public copy cannot
-drift. Referee contact details never go on the public site.
+Since 16 September 2026 the two are one document: all four letter writers agreed to be listed
+publicly, so the References section is on the website copy too, and `index.md` carries a
+matching `## References` section. The former `\publicCV` switch, which dropped the block from
+the website build, is gone; `build.ps1 web` now refuses to copy a CV without all four referees,
+and `R34` checks that the addresses on the CV and on the site agree.
 
 The `web` command also deletes the superseded dated PDF from this repo and relinks
 `index.md` when the month has rolled over, so only one CV is ever served.
@@ -49,13 +51,13 @@ passing unverified. Rule IDs map to the sections here. If you change a rule, cha
 
 ## 1. Sections
 
-Sixteen sections, in this order (`R2`):
+Seventeen sections, in this order (`R2`):
 
 `Fields` · `Current Position` · `Education` · `Research Visits` · `Job Market Paper` ·
 `Publications` · `Working Papers` · `Work in Progress` · `Policy Publications` ·
 `Conferences, Workshops, and Invited Seminars` · `Teaching Experience` ·
 `Awards and Scholarships` · `Refereeing` · `Research Experience` ·
-`Outreach and Volunteering` · `Skills`
+`Outreach and Volunteering` · `Skills` · `References`
 
 The ordering is a **job-market CV**: fields and position first, research output
 (JMP → publications → working papers → work in progress) before teaching and service, and
@@ -210,7 +212,8 @@ in the plain year row below it. Check this whenever a conference date passes.
 - **Award years are inferred**, not sourced: the two VEUK awards are dated to the degree
   completion years (2022, 2020) and the Deutschlandstipendium to the combined study period
   (2017–2022). Replace with the actual award years when known.
-- **Four pages for the committee copy, three for the public one.** Restoring the
+- **Four pages, References alone on the last.** (Until 16 Sep 2026 the public copy was three,
+  without the referees; now the two are one document.) Restoring the
   work-in-progress abstract on 10 Sep 2026 cost a page, bought back by tightening three
   spacing values: inter-entry `0.45em` to `0.30em`, after-paper `0.7em` to `0.5em`, and
   section spacing `1.1/0.45` to `0.95/0.40` baselineskip. **Do not tighten further** —
