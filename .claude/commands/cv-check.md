@@ -28,10 +28,11 @@ says, and whether it still agrees with the website.
 | `.\build.ps1 web` | the dated `CV_Academic_*.pdf` in this repo root | **Yes** — the same PDF |
 
 Since 16 September 2026 the two are one document: all four letter writers agreed to be listed
-publicly, so the References section is on the website copy too, and `index.md` carries a
-matching `## References` section. The former `\publicCV` switch, which dropped the block from
-the website build, is gone; `build.ps1 web` now refuses to copy a CV without all four referees,
-and `R34` checks that the addresses on the CV and on the site agree.
+publicly, so the References section is on the website copy too. The page itself lists no
+referees (Moritz, same day): the CV is the one place. The former `\publicCV` switch, which
+dropped the block from the website build, is gone; `build.ps1 web` now refuses to copy a CV
+without all four referees, and `R34` checks the section is there and that `index.md` links no
+referee address.
 
 The `web` command also deletes the superseded dated PDF from this repo and relinks
 `index.md` when the month has rolled over, so only one CV is ever served.

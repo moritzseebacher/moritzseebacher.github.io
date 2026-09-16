@@ -57,16 +57,3 @@ I am Moritz Seebacher, a PhD candidate at the [ifo Center for the Economics of E
 You can find my CV **[here](/CV_Academic_Moritz_Seebacher_09_26_English.pdf)**.
 
 ---
-
-## References {#references}
-
-- **Prof. Ludger Woessmann**  
-  <small>University of Munich (LMU) and ifo Institute · Doctoral supervisor · [woessmann@ifo.de](mailto:woessmann@ifo.de)</small>
-- **Prof. David Dorn**  
-  <small>University of Zurich · Co-author · [david.dorn@econ.uzh.ch](mailto:david.dorn@econ.uzh.ch)</small>
-- **Prof. Joseph Altonji**  
-  <small>Yale University · Host, research visit 2025 · [joseph.altonji@yale.edu](mailto:joseph.altonji@yale.edu)</small>
-- **Prof. Ingrid Haegele**  
-  <small>University of Munich (LMU) · [ingrid.haegele@econ.lmu.de](mailto:ingrid.haegele@econ.lmu.de)</small>
-
----

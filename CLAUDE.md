@@ -213,9 +213,10 @@ the job market material. One source produces two PDFs:
 
 **Since 16 September 2026 the two copies are the same document.** All four letter writers
 agreed to be listed publicly, so the References section (names, affiliations, email addresses)
-is on the website CV and, as a `## References` section, on `index.md` itself. Until then the
-website build defined `\publicCV`, which dropped the block; that switch is gone. `build.ps1 web`
-refuses to copy a CV that does not carry all four referees.
+is on the website CV. **The page itself lists no referees** (Moritz, same day): the CV is the
+one place, so `index.md` gets no References section and no referee `mailto:` link. Until then
+the website build defined `\publicCV`, which dropped the block; that switch is gone.
+`build.ps1 web` refuses to copy a CV that does not carry all four referees.
 
 **Never hand-edit the PDF in this repo root.** It is overwritten by the next `build.ps1 web`.
 Edit `tex/cv.tex` and rebuild.
@@ -227,9 +228,9 @@ Edit `tex/cv.tex` and rebuild.
    filename dated to the current month, deletes the superseded one, and relinks `index.md` if
    the month rolled over.
 3. Run `site_check.py` and `cv_audit.py`. `cv_audit.py` is the gate that matters: it reads the
-   published PDF and fails if its References section is missing or lists different referee
-   addresses than the `## References` section of `index.md`, if the Fields line, a paper title
-   or the draft-status tag disagrees with `index.md`, or if an abstract is not verbatim in both.
+   published PDF and fails if its References section is missing or short of four referees,
+   if `index.md` links a referee address, if the Fields line, a paper title or the draft-status
+   tag disagrees with `index.md`, or if an abstract is not verbatim in both.
 4. Commit and push — the new PDF goes live automatically.
 
 The Word documents in the repo root are superseded and are kept only as history. They are

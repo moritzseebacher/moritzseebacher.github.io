@@ -19,8 +19,8 @@ What LaTeX cannot guarantee is the part that was always the real risk: that the
 CV and the website say the same thing. That is what remains here. Until 16
 September 2026 R34 also enforced that the public copy carried no referee
 details; since all four letter writers agreed to be listed publicly, R34 now
-checks the opposite: the References section is present and agrees with the
-References section on the site. The rule numbers
+checks the opposite: the References section with all four writers is present.
+The page itself lists no referees (Moritz, 16 Sep 2026): the CV is the one place. The rule numbers
 of the surviving checks are unchanged (R31-R34, R37, R38) so that references to
 them elsewhere -- CLAUDE.md, commit messages -- still point at the same rule.
 
@@ -131,25 +131,23 @@ lines = [l.rstrip() for l in text.splitlines() if l.strip() and not FOOTER_RE.ma
 flat = squash('\n'.join(lines))
 pages = len([pg for pg in text.split('\f') if pg.strip()])
 
-# ------------------------------------- 3. the referees are on the CV and the site
-# Since 16 Sep 2026 the published CV carries the References section, and the
-# site has a References section of its own. Every referee address the site
-# shows must be in the CV and vice versa; a CV without the section is a stale
-# or truncated build.
+# ------------------------------------------- 3. the referees are on the CV only
+# Since 16 Sep 2026 the published CV carries the References section with all
+# four letter writers; a CV without it is a stale or truncated build. The page
+# itself lists no referees, so any mailto: to a referee on index.md is a slip.
+REFEREES = 4
 mails = sorted({m.lower() for m in re.findall(r'[\w.\-]+@[\w.\-]+\w', text)})
 cv_refs = {m for m in mails if m != CONTACT_EMAIL}
-site_refs = set()
-m_ref = re.search(r'(?ms)^##\s+References.*?(?=^##\s|\Z)', md)
-if not m_ref:
-    fail('R34', 'index.md has no "## References" section')
-else:
-    site_refs = {m.lower() for m in re.findall(r'mailto:([\w.\-]+@[\w.\-]+\w)', m_ref.group(0))}
 if not re.search(r'(?m)^\s*References\s*$', text):
     fail('R34', 'The published CV has no References section; rebuild with '
                 '".\\build.ps1 web" from the current tex/cv.tex.')
-if cv_refs != site_refs:
-    fail('R34', 'Referee addresses differ.\n      CV only:   %s\n      site only: %s'
-         % (sorted(cv_refs - site_refs) or '-', sorted(site_refs - cv_refs) or '-'))
+if len(cv_refs) < REFEREES:
+    fail('R34', 'The published CV lists %d referee address(es), expected %d: %s'
+         % (len(cv_refs), REFEREES, sorted(cv_refs) or '-'))
+site_mails = {m.lower() for m in re.findall(r'mailto:([\w.\-]+@[\w.\-]+\w)', md)}
+if site_mails & cv_refs:
+    fail('R34', 'index.md links a referee address %s; the referees are listed in the '
+                'CV only (Moritz, 16 Sep 2026)' % sorted(site_mails & cv_refs))
 
 # --------------------------------------------------------- 4. sections present
 found = [l.strip() for l in lines if l.strip() in SECTIONS]
