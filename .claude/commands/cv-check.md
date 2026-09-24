@@ -192,7 +192,9 @@ in the plain year row below it. Check this whenever a conference date passes.
   "Supervisor of bachelor thesis" — the redundancy keeps every teaching entry parallel.
 - **No course-evaluation line** (Moritz, 10 Sep 2026). The seminar scored 1.1 against a
   departmental average of 1.6, but that evidence belongs in the teaching statement, which
-  states it twice and attaches the full evaluation. The CV stays short.
+  states it once, in its Teaching evaluations section, and attaches the full evaluation plus
+  Woessmann's signed confirmation of Moritz's part in the course (23 Sep 2026). The CV stays
+  short.
 - **`(Bachelor Seminar)`, not `(Bachelor)`, for the Worker Skills seminar** — it is the more
   accurate description.
 - **`EEA-ESEM`**, the official congress name, not `EEA`.
