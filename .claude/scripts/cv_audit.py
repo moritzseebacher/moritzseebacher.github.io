@@ -224,7 +224,7 @@ if m_cv and m_site and m_cv.group(1).lower() != m_site.group(1).lower():
 for label, needle in (('JMP', 'Career Effects of Online Social Network Access at Labor Market Entry'),
                       ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
                       ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
-                      ('work in progress', 'Alumni Networks, First Job Placements'),
+                      ('work in progress', 'College Alumni Networks, Job Placements'),
                       ('work in progress', 'Who Gets Promoted? Evidence from LinkedIn Profiles'),
                       ('policy paper', 'Wie Fahrräder die Bildungschancen')):
     in_cv = squash(needle) in flat
