@@ -221,7 +221,7 @@ if m_cv and m_site and m_cv.group(1).lower() != m_site.group(1).lower():
          % (m_cv.group(1), m_site.group(1)))
 
 # Titles that appear on both sides must match verbatim.
-for label, needle in (('JMP', 'Career Effects of Online Social Network Access at Labor Market Entry'),
+for label, needle in (('JMP', 'Online Social Network Access at Labor Market Entry and Long-Run Career Success'),
                       ('working paper', 'Multidimensional Skills on LinkedIn Profiles'),
                       ('publication', 'Complementarity of Bicycles and Road Infrastructure'),
                       ('work in progress', 'College Alumni Networks, Job Placements'),
